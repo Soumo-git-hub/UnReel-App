@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15
+    container_name: unreel_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: unreel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - unreel_network
+
+  # Python FastAPI Backend
+  backend:
+    build: .
+    container_name: unreel_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@database:5432/unreel
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - HOST=0.0.0.0
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/app/app
+      - ./run.py:/app/run.py
+    depends_on:
+      - database
+    networks:
+      - unreel_network
+    command: ["python", "run.py"]
+
+volumes:
+  postgres_data:
+
+networks:
+  unreel_network:
+    driver: bridge
