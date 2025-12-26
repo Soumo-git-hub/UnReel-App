@@ -8,6 +8,7 @@ import sys
 import os
 import importlib.util
 import traceback
+import unittest
 from typing import Dict, List, Tuple
 
 # Add the project root to the path
@@ -24,6 +25,18 @@ def load_and_run_test(test_file: str) -> Tuple[bool, str]:
         Tuple of (success, message)
     """
     try:
+        # Special handling for unittest-based tests
+        if "test_translation_service" in test_file:
+            # Load the test module as a unittest
+            loader = unittest.TestLoader()
+            suite = loader.discover(os.path.dirname(test_file), pattern=os.path.basename(test_file))
+            runner = unittest.TextTestRunner(stream=open(os.devnull, 'w'))
+            result = runner.run(suite)
+            if result.wasSuccessful():
+                return True, "Unit test completed successfully"
+            else:
+                return False, f"Unit test failed with {len(result.failures)} failures and {len(result.errors)} errors"
+        
         # Load the test module
         spec = importlib.util.spec_from_file_location("test_module", test_file)
         if spec is None:
@@ -69,7 +82,8 @@ def main():
         "test_api.py",
         "test_full_analysis.py",
         "test_media_service.py",
-        "test_speech.py"
+        "test_speech.py",
+        "test_translation_service.py"  # Add our new test file
     ]
     
     results: Dict[str, Tuple[bool, str]] = {}

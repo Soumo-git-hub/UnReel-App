@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.services.media_service import MediaService
 from app.services.ai_service import AiService
+from app.services.translation_service import TranslationService
 from app.models import Analysis, ChatMessage
 
 # Configure logging
@@ -18,6 +19,7 @@ class AnalysisService:
         """Initialize the AnalysisService with required services."""
         self.media_service = MediaService()
         self.ai_service = AiService()
+        self.translation_service = TranslationService()
 
     async def create_analysis(self, db: Session, url: str) -> Dict[str, Any]:
         """
@@ -58,11 +60,16 @@ class AnalysisService:
             logger.debug(f"Frame paths: {frame_paths}")
             logger.debug(f"Metadata: {metadata}")
             
+            # Detect language of the transcript
+            detected_language = self.translation_service.detect_language(transcript)
+            logger.info(f"Detected transcript language: {detected_language}")
+            
             # Analyze content with AI
             ai_result = await self.ai_service.get_analysis(
                 audio_path, 
                 frame_paths, 
                 caption, 
+                transcript,
                 metadata
             )
             
@@ -76,6 +83,7 @@ class AnalysisService:
             analysis.keyTopics = ai_result["keyTopics"]
             analysis.mentionedResources = ai_result["mentionedResources"]
             analysis.fullTranscript = transcript  # Use the actual transcript
+            analysis.detectedLanguage = detected_language  # Store detected language
             
             db.commit()
             db.refresh(analysis)
@@ -106,6 +114,8 @@ class AnalysisService:
                     "mentionedResources": analysis.mentionedResources
                 },
                 "fullTranscript": analysis.fullTranscript,
+                "detectedLanguage": analysis.detectedLanguage,
+                "supportedLanguages": self.translation_service.get_supported_languages(),
                 "createdAt": analysis.createdAt
             }
             

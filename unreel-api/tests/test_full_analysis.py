@@ -37,9 +37,10 @@ async def test_full_analysis():
         frame_paths = media_data["frame_paths"]
         metadata = media_data["metadata"]
         caption = metadata.get("caption", "")
+        transcript = media_data.get("transcript", "")  # Added missing transcript parameter
         
         print("\nTesting AI analysis...")
-        ai_result = await ai_service.get_analysis(audio_path, frame_paths, caption, metadata)
+        ai_result = await ai_service.get_analysis(audio_path, frame_paths, caption, transcript, metadata)  # Added transcript parameter
         print("AI analysis completed!")
         print(f"AI result: {ai_result}")
         

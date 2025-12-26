@@ -1,9 +1,5 @@
 # .gitignore for UnReel Project
 
-# === EXCLUDE ENTIRE MOBILE DIRECTORY ===
-# The mobile app is a separate project and should not be included in this repository
-unreel-mobile/
-
 # === PYTHON ENVIRONMENT FILES ===
 # Virtual environments
 venv/

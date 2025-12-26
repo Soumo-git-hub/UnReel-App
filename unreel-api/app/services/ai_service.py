@@ -24,7 +24,7 @@ class AiService:
         self.model = genai.GenerativeModel('gemini-flash-latest')
 
     async def get_analysis(self, audio_path: Optional[str], image_paths: List[str], 
-                          caption: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+                          caption: str, transcript: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze video content using Gemini AI.
         
@@ -32,6 +32,7 @@ class AiService:
             audio_path: Path to the audio file (can be None)
             image_paths: List of paths to image frames
             caption: Video caption text
+            transcript: Video transcript text
             metadata: Video metadata
             
         Returns:
@@ -67,11 +68,12 @@ class AiService:
             # Prepare the prompt with explicit field names
             prompt_parts = [
                 "You are an expert video analyst. Analyze the provided content to provide a structured analysis in JSON format with the EXACT field names specified:",
-                "1. 'summary': A concise summary of the video content (1-2 sentences)",
-                "2. 'translation': A translation of the content (if applicable, otherwise return the same as summary)",
-                "3. 'keyTopics': Key topics as an array of strings (3-5 topics)",
-                "4. 'mentionedResources': Mentioned resources (products, songs, locations, etc.) as an array of objects with 'type' and 'name' properties (0-5 resources)",
+                "1. 'summary': A comprehensive summary of the video content (2-3 sentences) in ENGLISH that combines information from the transcript, caption, and visual content. Focus on the most reliable sources first (transcript if available, then caption, then visual analysis). ALWAYS return this summary in English regardless of the source language.",
+                "2. 'translation': A translation of the main content (if applicable, otherwise return the same as summary). This should be a translation of the summary content.",
+                "3. 'keyTopics': Key topics as an array of strings (3-7 topics) identified from all available sources",
+                "4. 'mentionedResources': Mentioned resources (products, songs, locations, etc.) as an array of objects with 'type' and 'name' properties (0-10 resources)",
                 f"Video Caption: {caption}",
+                f"Video Transcript: {transcript if transcript else 'No transcript available'}",
                 f"Video Metadata: {metadata}",
             ]
             prompt_parts.extend(files_to_upload)
@@ -103,8 +105,8 @@ class AiService:
             logger.error(f"Error in AI analysis: {str(e)}", exc_info=True)
             # Return fallback response
             return {
-                "summary": "Video analysis completed successfully.",
-                "translation": "Video analysis completed successfully.",
+                "summary": "Video analysis completed successfully. This is a placeholder summary in English when the AI service is unavailable.",
+                "translation": "Video analysis completed successfully. This is a placeholder summary in English when the AI service is unavailable.",
                 "keyTopics": ["video", "content", "analysis"],
                 "mentionedResources": [
                     {

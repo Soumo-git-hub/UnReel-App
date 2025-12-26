@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import analysis_router, chat_router
 from app.database import Base, engine
 from app.core.config import settings
+from app.database_migration import add_detected_language_column
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +20,10 @@ logger = logging.getLogger(__name__)
 try:
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
+    
+    # Add detectedLanguage column if it doesn't exist
+    add_detected_language_column()
+    logger.info("Database migration completed successfully")
 except Exception as e:
     logger.error(f"Error creating database tables: {e}")
 

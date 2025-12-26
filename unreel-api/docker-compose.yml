@@ -17,6 +17,18 @@ services:
     networks:
       - unreel_network
 
+  # Adminer Database Management
+  adminer:
+    image: adminer
+    container_name: unreel_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - unreel_network
+    depends_on:
+      - database
+
   # Python FastAPI Backend
   backend:
     build: .
