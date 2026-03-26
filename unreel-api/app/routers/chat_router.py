@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
 
-@router.post("/", response_model=schemas.ChatResponse)
+@router.post("", response_model=schemas.ChatResponse)
 async def chat_with_video(
     request: schemas.ChatRequest,
     db: Session = Depends(get_db),
