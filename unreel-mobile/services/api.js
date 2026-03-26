@@ -6,8 +6,8 @@ import { Platform } from "react-native";
 // For iOS simulator and physical devices, use localhost
 const API_BASE_URL =
   Platform.OS === "android"
-    ? "http:// 192.168.51.112:3000/api/v1" // Use your development machine's correct IP
-    : "http://localhost:3000/api/v1";
+    ? "http://192.168.51.112:8000/api/v1" // Use your development machine's correct IP
+    : "http://localhost:8000/api/v1";
 
 // Function to test network connectivity
 export const testConnectivity = async () => {
