@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     # Instagram cookie file path
     INSTAGRAM_COOKIE_FILE: Optional[str] = None
     FIREBASE_SERVICE_ACCOUNT_PATH: Optional[str] = None
+    FIREBASE_SERVICE_ACCOUNT_JSON: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_file=".env",

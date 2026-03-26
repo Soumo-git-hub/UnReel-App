@@ -3,12 +3,13 @@ from firebase_admin import auth, credentials
 from fastapi import Header, HTTPException, status
 import logging
 import os
+import json
 
 logger = logging.getLogger(__name__)
 
 # Initialize Firebase Admin SDK
 # You should provide the path to your service account key file in the .env file
-# or set the GOOGLE_APPLICATION_CREDENTIALS environment variable.
+# or provide the service account JSON as a string in the FIREBASE_SERVICE_ACCOUNT_JSON setting.
 from app.core.config import settings
 
 def initialize_firebase():
@@ -17,11 +18,26 @@ def initialize_firebase():
         if not firebase_admin._apps:
             from app.core.config import settings
             service_account_path = settings.FIREBASE_SERVICE_ACCOUNT_PATH
+            service_account_json = settings.FIREBASE_SERVICE_ACCOUNT_JSON
             
+            # Option 1: Initialize using raw JSON string from environment secret
+            if service_account_json:
+                try:
+                    cred_dict = json.loads(service_account_json)
+                    cred = credentials.Certificate(cred_dict)
+                    firebase_admin.initialize_app(cred)
+                    logger.info("Firebase Admin initialized with raw JSON string from environment")
+                    return
+                except json.JSONDecodeError as je:
+                    logger.error(f"Error parsing service account JSON string: {je}")
+                except Exception as e:
+                    logger.error(f"Error initializing with JSON string: {e}")
+
+            # Option 2: Fallback to file path
             if service_account_path and os.path.exists(service_account_path):
                 cred = credentials.Certificate(service_account_path)
                 firebase_admin.initialize_app(cred)
-                logger.info("Firebase Admin initialized with service account certificate")
+                logger.info("Firebase Admin initialized with service account certificate file")
             else:
                 firebase_admin.initialize_app()
                 logger.info("Firebase Admin initialized with default credentials")
