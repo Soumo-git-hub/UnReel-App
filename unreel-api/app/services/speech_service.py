@@ -7,6 +7,8 @@ import warnings
 # Configure logging
 logger = logging.getLogger(__name__)
 
+# Global model instance for performance (Singleton pattern)
+_WHISPER_MODEL = None
 
 class SpeechService:
     """Service for speech-to-text transcription using OpenAI Whisper."""
@@ -14,17 +16,22 @@ class SpeechService:
     def __init__(self):
         """
         Initialize the SpeechService with OpenAI Whisper.
+        Uses a global model instance to avoid reloading.
         """
+        global _WHISPER_MODEL
         try:
             # Suppress warnings from Whisper
             warnings.filterwarnings("ignore")
             
-            # Initialize the Whisper model
-            # Using 'base' model for balance of speed and accuracy
-            # Options: 'tiny', 'base', 'small', 'medium', 'large'
-            self.model = whisper.load_model("base")
+            # Initialize the Whisper model if not already loaded
+            if _WHISPER_MODEL is None:
+                logger.info("Loading Whisper 'base' model for the first time...")
+                # Options: 'tiny', 'base', 'small', 'medium', 'large'
+                _WHISPER_MODEL = whisper.load_model("base")
+                logger.info("Whisper model loaded successfully")
+            
+            self.model = _WHISPER_MODEL
             self.available = True
-            logger.info("Whisper speech service initialized successfully")
         except Exception as e:
             logger.error(f"Speech service not available: {str(e)}")
             self.available = False
@@ -50,6 +57,7 @@ class SpeechService:
             
         try:
             # Transcribe the audio file
+            # Note: Whisper's transcribe function is not natively async
             result = self.model.transcribe(audio_file_path)
             # Ensure we always return a string
             return str(result["text"])
@@ -71,4 +79,4 @@ class SpeechService:
         transcript = self.extract_transcript(audio_file_path)
         if transcript is None:
             return "Full transcript would be extracted from audio in a real implementation with Whisper model"
-        return transcript
+        return transcript

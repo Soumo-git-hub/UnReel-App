@@ -24,7 +24,8 @@ class AiService:
         self.model = genai.GenerativeModel('gemini-flash-latest')
 
     async def get_analysis(self, audio_path: Optional[str], image_paths: List[str], 
-                          caption: str, transcript: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+                          caption: str, transcript: str, metadata: Dict[str, Any],
+                          detected_language: Optional[str] = None) -> Dict[str, Any]:
         """
         Analyze video content using Gemini AI.
         
@@ -72,6 +73,7 @@ class AiService:
                 "2. 'translation': A translation of the main content (if applicable, otherwise return the same as summary). This should be a translation of the summary content.",
                 "3. 'keyTopics': Key topics as an array of strings (3-7 topics) identified from all available sources",
                 "4. 'mentionedResources': Mentioned resources (products, songs, locations, etc.) as an array of objects with 'type' and 'name' properties (0-10 resources)",
+                f"Source Language Detection: {detected_language if detected_language else 'Auto-detect'}",
                 f"Video Caption: {caption}",
                 f"Video Transcript: {transcript if transcript else 'No transcript available'}",
                 f"Video Metadata: {metadata}",
@@ -93,6 +95,13 @@ class AiService:
             # Parse the response
             result = json.loads(response.text)
             
+            # If the result is a list, take the first element (LLMs sometimes wrap in an array)
+            if isinstance(result, list) and len(result) > 0:
+                result = result[0]
+            elif not isinstance(result, dict):
+                # If it's not a dict, something is wrong, use empty dict for safety
+                result = {}
+                
             # Extract fields with proper names
             return {
                 "summary": result.get("summary", ""),

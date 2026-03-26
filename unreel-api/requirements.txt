@@ -13,3 +13,4 @@ openai-whisper==20250625
 langdetect==1.0.9
 deep-translator==1.11.4
 requests==2.31.0
+firebase-admin==6.4.0

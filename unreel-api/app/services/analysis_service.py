@@ -1,4 +1,6 @@
 import logging
+import os
+import shutil
 from typing import Dict, Any
 
 from sqlalchemy.orm import Session
@@ -11,23 +13,37 @@ from app.models import Analysis, ChatMessage
 # Configure logging
 logger = logging.getLogger(__name__)
 
+# Global service instances (Singleton pattern)
+_media_service = None
+_ai_service = None
+_translation_service = None
 
 class AnalysisService:
     """Service for orchestrating video analysis workflow."""
     
     def __init__(self):
-        """Initialize the AnalysisService with required services."""
-        self.media_service = MediaService()
-        self.ai_service = AiService()
-        self.translation_service = TranslationService()
+        """Initialize the AnalysisService with required services (cached)."""
+        global _media_service, _ai_service, _translation_service
+        
+        if _media_service is None:
+            _media_service = MediaService()
+        if _ai_service is None:
+            _ai_service = AiService()
+        if _translation_service is None:
+            _translation_service = TranslationService()
+            
+        self.media_service = _media_service
+        self.ai_service = _ai_service
+        self.translation_service = _translation_service
 
-    async def create_analysis(self, db: Session, url: str) -> Dict[str, Any]:
+    async def create_analysis(self, db: Session, url: str, user_id: str = None) -> Dict[str, Any]:
         """
         Create a new video analysis.
         
         Args:
             db: Database session
             url: URL of the video to analyze
+            user_id: ID of the user requesting analysis
             
         Returns:
             Dictionary containing analysis results
@@ -38,12 +54,14 @@ class AnalysisService:
         # Create initial analysis record
         analysis = Analysis(
             originalUrl=url,
+            userId=user_id,
             status="processing"
         )
         db.add(analysis)
         db.commit()
         db.refresh(analysis)
         
+        media_data = None
         try:
             # Process video using media service
             media_data = await self.media_service.process_video(url)
@@ -70,7 +88,8 @@ class AnalysisService:
                 frame_paths, 
                 caption, 
                 transcript,
-                metadata
+                metadata,
+                detected_language
             )
             
             # Update analysis with results
@@ -127,3 +146,13 @@ class AnalysisService:
             logger.error(f"Analysis failed: {str(e)}", exc_info=True)
             # Re-raise the exception
             raise
+        finally:
+            # Clean up temporary directory if it exists
+            if media_data and "temp_dir" in media_data:
+                temp_dir = media_data["temp_dir"]
+                if os.path.exists(temp_dir):
+                    try:
+                        shutil.rmtree(temp_dir)
+                        logger.info(f"Cleaned up temporary directory: {temp_dir}")
+                    except Exception as cleanup_error:
+                        logger.error(f"Error cleaning up temporary directory {temp_dir}: {str(cleanup_error)}")

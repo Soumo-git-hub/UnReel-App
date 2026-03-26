@@ -37,7 +37,8 @@ class MediaService:
             return await self._process_google_drive_video(url)
         
         # Create a temporary directory for processing
-        with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir = tempfile.mkdtemp()
+        try:
             video_path = os.path.join(temp_dir, 'video.mp4')
             audio_path = os.path.join(temp_dir, 'audio.mp3')
             
@@ -153,7 +154,7 @@ class MediaService:
     
             # 4. Extract transcript from audio (if audio is available)
             transcript = self._extract_transcript(extracted_audio_path)
-
+ 
             # Return paths and metadata
             return {
                 "video_path": video_path,
@@ -163,6 +164,10 @@ class MediaService:
                 "transcript": transcript,
                 "temp_dir": temp_dir
             }
+        except Exception as e:
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+            raise e
 
     async def _process_google_drive_video(self, url: str) -> Dict[str, Any]:
         """
@@ -177,7 +182,8 @@ class MediaService:
         logger.info(f"Processing Google Drive video: {url}")
         
         # Create a temporary directory for processing
-        with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir = tempfile.mkdtemp()
+        try:
             video_path = os.path.join(temp_dir, 'video.mp4')
             audio_path = os.path.join(temp_dir, 'audio.mp3')
             
@@ -221,7 +227,7 @@ class MediaService:
     
             # 4. Extract transcript from audio (if audio is available)
             transcript = self._extract_transcript(extracted_audio_path)
-
+ 
             # Return paths and metadata
             return {
                 "video_path": video_path,
@@ -231,6 +237,10 @@ class MediaService:
                 "transcript": transcript,
                 "temp_dir": temp_dir
             }
+        except Exception as e:
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+            raise e
 
     def _convert_google_drive_url(self, url: str) -> str:
         """

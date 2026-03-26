@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# Database
+*.db
+*.sqlite3
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Service Accounts & Secrets
+*.json
+!app/schemas/*.json
+
+# Media files
+temp/
+/media
+/frames
+*.mp4
+*.mp3
+*.png
+*.jpg
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+instagram_cookies.txt
+un-reel-firebase-adminsdk-fbsvc-*.json
+firebase-service-account.json

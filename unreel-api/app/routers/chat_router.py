@@ -9,6 +9,7 @@ from app import schemas
 from app.services.ai_service import AiService
 from app.models import Analysis
 from app.database import get_db
+from app.auth import get_current_user
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -19,7 +20,8 @@ router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 @router.post("/", response_model=schemas.ChatResponse)
 async def chat_with_video(
     request: schemas.ChatRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Chat with the AI about a previously analyzed video.
@@ -73,7 +75,10 @@ def _prepare_analysis_context(analysis: Analysis) -> str:
         Formatted context string
     """
     # Safely access attributes
-    summary = getattr(analysis, 'summary', None) or 'None'
+    title = getattr(analysis, 'title', None) or 'Unknown Title'
+    uploader = getattr(analysis, 'uploader', None) or 'Unknown Uploader'
+    summary = getattr(analysis, 'summary', None) or 'No summary available'
+    transcript = getattr(analysis, 'fullTranscript', None) or 'No transcript available'
     
     # Handle JSON columns
     key_topics = getattr(analysis, 'keyTopics', None) or []
@@ -100,9 +105,18 @@ def _prepare_analysis_context(analysis: Analysis) -> str:
         resources_str = str(mentioned_resources) if mentioned_resources else 'None'
     
     context = f"""
-    Video Summary: {summary}
+    Video Title: {title}
+    Video Uploader: {uploader}
+    
+    Video Summary: 
+    {summary}
+    
     Video Topics: {topics_str}
-    Video Resources: {resources_str}
+    
+    Video Resources Mentioned: {resources_str}
+    
+    Full Video Transcript:
+    {transcript}
     """
     
     return context

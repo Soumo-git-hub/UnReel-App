@@ -9,6 +9,7 @@ from app import schemas
 from app.services.analysis_service import AnalysisService
 from app.services.translation_service import TranslationService
 from app.database import get_db
+from app.auth import get_current_user
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -16,10 +17,39 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/analyze", tags=["analysis"])
 
 
-@router.post("/", response_model=schemas.AnalysisResponse)
+@router.get("", response_model=list[schemas.AnalysisResponse])
+async def list_analyses(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+) -> Any:
+    """
+    List user's analysis history.
+    """
+    from app.models import Analysis
+    user_id = current_user.get("uid")
+    analyses = db.query(Analysis).filter(Analysis.userId == user_id).order_by(Analysis.createdAt.desc()).limit(20).all()
+    # Map id to analysisId for schema compatibility
+    return [
+        {
+            "analysisId": a.id,
+            "originalUrl": a.originalUrl,
+            "status": a.status,
+            "createdAt": a.createdAt,
+            "userId": a.userId,
+            "detectedLanguage": a.detectedLanguage,
+            "metadata": {
+                "title": a.title,
+                "uploader": a.uploader,
+                "caption": a.caption
+            }
+        } for a in analyses
+    ]
+
+@router.post("", response_model=schemas.AnalysisResponse)
 async def create_analysis(
     request: schemas.AnalysisRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Create a new video analysis.
@@ -41,7 +71,11 @@ async def create_analysis(
         analysis_service = AnalysisService()
         
         # Process the analysis
-        analysis = await analysis_service.create_analysis(db=db, url=request.url)
+        analysis = await analysis_service.create_analysis(
+            db=db, 
+            url=request.url,
+            user_id=current_user.get("uid")
+        )
         
         logger.info(f"Analysis completed successfully for URL: {request.url}")
         return analysis
@@ -77,7 +111,8 @@ async def create_analysis(
 async def translate_transcript(
     analysis_id: str,
     request: schemas.TranslationRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Translate the transcript of an analysis to a target language.
@@ -146,3 +181,37 @@ async def translate_transcript(
         error_msg = f"Transcript translation failed: {str(e)}"
         logger.error(error_msg, exc_info=True)
         raise HTTPException(status_code=500, detail="An unexpected error occurred during transcript translation. Please try again later.")
+@router.get("/{analysis_id}")
+async def get_analysis(
+    analysis_id: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """
+    Get an existing analysis by ID.
+    """
+    from app.models import Analysis
+    analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
+    
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+        
+    return {
+        "analysisId": analysis.id,
+        "originalUrl": analysis.originalUrl,
+        "status": analysis.status,
+        "metadata": {
+            "title": analysis.title,
+            "uploader": analysis.uploader,
+            "caption": analysis.caption
+        },
+        "content": {
+            "summary": analysis.summary,
+            "keyTopics": analysis.keyTopics,
+            "mentionedResources": analysis.mentionedResources
+        },
+        "fullTranscript": analysis.fullTranscript,
+        "detectedLanguage": analysis.detectedLanguage,
+        "createdAt": analysis.createdAt,
+        "supportedLanguages": TranslationService().get_supported_languages()
+    }

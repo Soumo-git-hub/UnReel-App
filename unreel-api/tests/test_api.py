@@ -3,7 +3,7 @@ import json
 
 def test_api():
     """Test the UnReel API with an Instagram Reel URL"""
-    url = "http://localhost:3000/api/v1/analyze/"
+    url = "http://localhost:8000/api/v1/analyze/"
     payload = {
         "url": "https://www.instagram.com/reel/DQmoVSeCWl8/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     }

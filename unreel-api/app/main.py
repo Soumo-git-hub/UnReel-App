@@ -23,6 +23,9 @@ try:
     
     # Add detectedLanguage column if it doesn't exist
     add_detected_language_column()
+    # Add userId column if it doesn't exist
+    from app.database_migration import add_user_id_column
+    add_user_id_column()
     logger.info("Database migration completed successfully")
 except Exception as e:
     logger.error(f"Error creating database tables: {e}")
@@ -38,7 +41,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

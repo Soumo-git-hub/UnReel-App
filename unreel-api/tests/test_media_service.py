@@ -19,6 +19,11 @@ async def test_media_service():
         result = await media_service.process_video(test_url)
         print("Video processing completed successfully!")
         print(f"Result keys: {result.keys()}")
+        print(f"Temp directory: {result.get('temp_dir')}")
+        frame_paths = result.get('frame_paths', [])
+        print(f"Number of frames extracted: {len(frame_paths)}")
+        for i, p in enumerate(frame_paths[:5]):
+            print(f"Frame {i} exists: {os.path.exists(p)} at {p}")
         return result
     except Exception as e:
         print(f"Error processing video: {str(e)}")

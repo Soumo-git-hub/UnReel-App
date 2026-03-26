@@ -12,7 +12,7 @@ def test_chat_with_existing_analysis():
     
     # Step 1: Chat with the analysis
     print("\n=== STEP 1: Chatting with the analysis ===")
-    chat_url = "http://localhost:3000/api/v1/chat/"
+    chat_url = "http://localhost:8000/api/v1/chat/"
     
     headers = {
         "Content-Type": "application/json"
@@ -43,7 +43,7 @@ def test_chat_with_existing_analysis():
         
         # Step 2: Get chat history
         print("\n=== STEP 2: Getting chat history ===")
-        history_url = f"http://localhost:3000/api/v1/chat/history/{analysis_id}"
+        history_url = f"http://localhost:8000/api/v1/chat/history/{analysis_id}"
         
         history_response = requests.get(history_url, headers=headers)
         
@@ -84,7 +84,7 @@ def test_chat_with_existing_analysis():
             
         # Step 5: Test chat history deletion
         print("\n=== STEP 5: Testing chat history deletion ===")
-        delete_url = f"http://localhost:3000/api/v1/chat/history/{analysis_id}"
+        delete_url = f"http://localhost:8000/api/v1/chat/history/{analysis_id}"
         
         delete_response = requests.delete(delete_url, headers=headers)
         
@@ -106,7 +106,7 @@ def test_instagram_reel_chat():
     # First, let's analyze an Instagram Reel
     print("=== Testing Instagram Reel Analysis and Chat ===")
     
-    analyze_url = "http://localhost:3000/api/v1/analyze/"
+    analyze_url = "http://localhost:8000/api/v1/analyze/"
     headers = {
         "Content-Type": "application/json"
     }
@@ -138,7 +138,7 @@ def test_instagram_reel_chat():
             
             # Now let's chat with this analysis
             print("\n=== Chatting with Instagram Reel Analysis ===")
-            chat_url = "http://localhost:3000/api/v1/chat/"
+            chat_url = "http://localhost:8000/api/v1/chat/"
             
             chat_payload = {
                 "analysisId": analysis_id,
@@ -154,7 +154,7 @@ def test_instagram_reel_chat():
                 
                 # Get the chat history
                 print("\n=== Getting Chat History ===")
-                history_url = f"http://localhost:3000/api/v1/chat/history/{analysis_id}"
+                history_url = f"http://localhost:8000/api/v1/chat/history/{analysis_id}"
                 history_response = requests.get(history_url, headers=headers)
                 
                 if history_response.status_code == 200:
@@ -186,7 +186,7 @@ def test_instagram_reel_analysis_and_chat():
     
     # Step 1: Analyze the Instagram Reel
     print("\n=== STEP 1: Analyzing Instagram Reel ===")
-    analyze_url = "http://localhost:3000/api/v1/analyze/"
+    analyze_url = "http://localhost:8000/api/v1/analyze/"
     
     # Using the Instagram Reel from the existing test
     payload = {
@@ -246,7 +246,7 @@ def test_instagram_reel_analysis_and_chat():
             
         # Step 3: Retrieve chat history
         print("\n=== STEP 3: Retrieving Chat History ===")
-        history_url = f"http://localhost:3000/api/v1/chat/history/{analysis_id}"
+        history_url = f"http://localhost:8000/api/v1/chat/history/{analysis_id}"
         
         history_response = requests.get(history_url, headers=headers)
         
@@ -265,7 +265,7 @@ def test_instagram_reel_analysis_and_chat():
             
         # Step 4: Verify analysis data is maintained
         print("\n=== STEP 4: Verifying Analysis Data ===")
-        get_analysis_url = f"http://localhost:3000/api/v1/analyze/{analysis_id}"
+        get_analysis_url = f"http://localhost:8000/api/v1/analyze/{analysis_id}"
         
         get_analysis_response = requests.get(get_analysis_url, headers=headers)
         
@@ -287,7 +287,7 @@ def test_instagram_reel_analysis_and_chat():
 
 def send_chat_message(payload, headers):
     """Helper function to send chat messages"""
-    chat_url = "http://localhost:3000/api/v1/chat/"
+    chat_url = "http://localhost:8000/api/v1/chat/"
     
     print(f"Sending chat message: {payload['message']}")
     
@@ -345,7 +345,7 @@ def test_enhanced_chat_context():
             
         # Retrieve chat history to verify context is maintained
         print("\n=== Retrieving Chat History ===")
-        history_url = f"http://localhost:3000/api/v1/chat/history/{analysis_id}"
+        history_url = f"http://localhost:8000/api/v1/chat/history/{analysis_id}"
         
         history_response = requests.get(history_url, headers=headers)
         

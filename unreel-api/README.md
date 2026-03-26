@@ -145,17 +145,17 @@ ffmpeg -version
 
 2. **Create a virtual environment:**
    ```bash
-   python -m venv unreel-env
+   python -m venv venv
    ```
 
 3. **Activate the virtual environment:**
    - On Windows:
      ```powershell
-     .\unreel-env\Scripts\Activate.ps1
+     .\venv\Scripts\Activate.ps1
      ```
    - On macOS/Linux:
      ```bash
-     source unreel-env/bin/activate
+     source venv/bin/activate
      ```
 
 4. **Install Python dependencies:**
@@ -243,10 +243,10 @@ Replace `your_actual_gemini_api_key_here` with your actual API key from Google A
 2. **Activate the virtual environment:**
    ```bash
    # On Windows
-   .\unreel-env\Scripts\Activate.ps1
+   .\venv\Scripts\Activate.ps1
    
    # On macOS/Linux
-   source unreel-env/bin/activate
+   source venv/bin/activate
    ```
 
 3. **Run the application:**
@@ -265,10 +265,10 @@ The project includes several test files in the `tests/` directory. To run the te
 1. **Activate the virtual environment:**
    ```bash
    # On Windows
-   .\unreel-env\Scripts\Activate.ps1
+   .\venv\Scripts\Activate.ps1
    
    # On macOS/Linux
-   source unreel-env/bin/activate
+   source venv/bin/activate
    ```
 
 2. **Run the test runner (recommended):**

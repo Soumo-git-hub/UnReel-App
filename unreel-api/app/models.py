@@ -21,6 +21,7 @@ class Analysis(Base):
     mentionedResources: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
     fullTranscript: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     detectedLanguage: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    userId: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
     createdAt: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     updatedAt: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
