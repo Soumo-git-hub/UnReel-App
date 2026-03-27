@@ -51,13 +51,16 @@ class MediaService:
             
             # Add cookie support for Instagram
             if 'instagram.com' in url:
-                # Check if cookie file exists in settings
-                if settings.INSTAGRAM_COOKIE_FILE and os.path.exists(settings.INSTAGRAM_COOKIE_FILE):
-                    ydl_opts['cookiefile'] = settings.INSTAGRAM_COOKIE_FILE
-                    logger.info(f"Using Instagram cookies from {settings.INSTAGRAM_COOKIE_FILE}")
+                # Determine cookie file path (priority to settings, then default filename)
+                cookie_path = settings.INSTAGRAM_COOKIE_FILE or 'instagram_cookies.txt'
+                
+                if os.path.exists(cookie_path):
+                    ydl_opts['cookiefile'] = cookie_path
+                    logger.info(f"Using Instagram cookies from {cookie_path}")
                 else:
                     # Use embed page as fallback which might not require login
                     ydl_opts.update({
+
                         'format': 'best[ext=mp4]/best',
                         'extractor_args': {
                             'instagram': {
@@ -114,9 +117,11 @@ class MediaService:
                             }
                         }
                     }
-                    # Add cookie file if available
-                    if settings.INSTAGRAM_COOKIE_FILE and os.path.exists(settings.INSTAGRAM_COOKIE_FILE):
-                        fallback_opts['cookiefile'] = settings.INSTAGRAM_COOKIE_FILE
+                    # Add cookie file if available (priority to settings, then default filename)
+                    cookie_path = settings.INSTAGRAM_COOKIE_FILE or 'instagram_cookies.txt'
+                    if os.path.exists(cookie_path):
+                        fallback_opts['cookiefile'] = cookie_path
+
                     
                     try:
                         with yt_dlp.YoutubeDL(cast(Any, fallback_opts)) as ydl:
