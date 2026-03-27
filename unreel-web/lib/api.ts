@@ -2,6 +2,11 @@ import { auth } from './firebase';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+if (!process.env.NEXT_PUBLIC_API_URL && typeof window !== 'undefined') {
+  console.warn("⚠️ API Base URL is missing! (NEXT_PUBLIC_API_URL). Falling back to localhost.");
+}
+
+
 
 async function getAuthHeaders(providedUser?: any) {
   const user = providedUser || auth.currentUser;
