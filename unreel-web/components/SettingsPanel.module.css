@@ -1,0 +1,420 @@
+.overlay {
+  display: none;
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 390px;
+  height: 100vh;
+  background: rgba(10, 10, 15, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  z-index: 2000;
+  overflow: visible;
+  pointer-events: none; /* Let clicks pass through empty areas */
+}
+
+.content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  pointer-events: auto; /* Re-enable for content */
+}
+
+.handle {
+  position: absolute;
+  left: -42px;
+  top: 15%;
+  width: 42px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px 0 0 16px;
+  cursor: pointer;
+  border: none;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 2001;
+  pointer-events: auto; /* Re-enable for handle */
+}
+
+.handle:hover {
+  width: 52px;
+  left: -52px;
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  pointer-events: auto; /* Ensure child elements like Sign Out buttons are clickable */
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #00ffff; /* Changed from magenta to cyan */
+}
+
+.titleInfo h2 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.userSection {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.userAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatarPlaceholder {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.userAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 500;
+  color: #fff;
+}
+
+.userEmail {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.groupTitle {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  padding-left: 0.25rem;
+}
+
+.groupItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.settingItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--accent);
+  transform: translateX(-4px);
+}
+
+.settingWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+}
+
+.activeWrapper {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.itemRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.chevron {
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.activeWrapper .chevron {
+  opacity: 1;
+  color: var(--accent);
+}
+
+.expansionZone {
+  overflow: hidden;
+}
+
+.expansionInner {
+  padding: 0 1.25rem 1.25rem; /* Centered padding */
+}
+
+/* Theme Selector Styles (From Screenshot) */
+.themeSelector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 0.5rem auto 0;
+  width: 100%;
+}
+
+.themeBtn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.themeBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.themeBtnActive {
+  background: rgba(0, 255, 255, 0.08);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: none; /* Removed glow */
+}
+
+.themeIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.themeBtnActive .themeIcon {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.themeBtn span {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Expanded Content Elements */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.inputGroup label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+}
+
+.inputGroup input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.saveBtn {
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.switch, .switchActive {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  padding: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch { background: rgba(255, 255, 255, 0.1); }
+.switchActive { background: var(--accent); }
+
+.switchHandle {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.switchActive .switchHandle {
+  transform: translateX(16px);
+}
+
+.hintText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.rowLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rowIcon {
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.itemIcon {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.settingItem:hover .itemIcon {
+  color: #00ffff;
+}
+
+.itemLabel {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.itemValue {
+  font-size: 0.8rem;
+  color: #00ffff;
+  font-weight: 500;
+}
+
+.logoutBtn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+  color: #ff4444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .panel {
+    width: 100vw;
+  }
+}

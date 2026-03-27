@@ -1,0 +1,102 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  max-width: 400px;
+  width: 100%;
+}
+
+.visualizer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+}
+
+.glow {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--aurora-1) 0%, transparent 70%);
+  filter: blur(20px);
+  z-index: 0;
+}
+
+.mainCircle {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cssSpinner {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--accent);
+  box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+.stepIcon {
+  position: absolute;
+  color: var(--accent);
+  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+}
+
+.textContainer {
+  height: 80px;
+  width: 100%;
+  text-align: center;
+}
+
+.stepTitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.stepSubtext {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  transition: width 0.8s ease;
+}
+
+.spinner {
+  animation: none; /* We use framer motion for rotation */
+}

@@ -1,0 +1,61 @@
+.container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg);
+  overflow: hidden;
+}
+
+.auroraBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.auroraCircle1 {
+  position: absolute;
+  width: 80vw;
+  height: 80vw;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--aurora-1) 0%, transparent 60%);
+  top: -20%;
+  left: -20%;
+  animation: aurora-float 20s infinite ease-in-out;
+  transform: translate3d(0,0,0);
+}
+
+.auroraCircle2 {
+  position: absolute;
+  width: 70vw;
+  height: 70vw;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--aurora-2) 0%, transparent 60%);
+  bottom: -15%;
+  right: -15%;
+  animation: aurora-float-reverse 25s infinite ease-in-out;
+  transform: translate3d(0,0,0);
+}
+
+.auroraCircle3 {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(138, 43, 226, 0.08) 0%, transparent 60%);
+  top: 35%;
+  left: 25%;
+  animation: aurora-float 30s infinite ease-in-out;
+  transform: translate3d(0,0,0);
+}
+
+
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}

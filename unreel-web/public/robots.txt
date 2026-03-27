@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://unreel-web.vercel.app/sitemap.xml

@@ -1,0 +1,249 @@
+.overlay {
+  display: none;
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 390px;
+  height: 100vh;
+  background: rgba(10, 10, 15, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  z-index: 2000;
+  overflow: visible;
+  pointer-events: none; /* Let clicks pass through empty areas */
+}
+
+.content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  pointer-events: auto; /* Re-enable for content */
+}
+
+.handle {
+  position: absolute;
+  right: -42px; /* Protrude by width */
+  top: 15%;
+  width: 42px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 16px 16px 0;
+  cursor: pointer;
+  border: none;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 2001;
+  pointer-events: auto; /* Re-enable for handle */
+}
+
+.handle:hover {
+  width: 52px;
+  right: -52px;
+}
+
+.panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--accent);
+}
+
+.titleInfo h2 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+}
+
+.closeBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 255, 255, 0.2); /* Accent color border on hover */
+  transform: translateY(-2px);
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.itemTitle {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 2.2rem;
+  line-height: 1.4;
+}
+
+.jumpIcon {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.4rem;
+  color: var(--accent);
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.item:hover .jumpIcon {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 450;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.platformBadge {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dot {
+  opacity: 0.15;
+}
+
+.url {
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.emptyState p {
+  color: #fff;
+  font-weight: 400;
+}
+
+.emptyState span {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.skeletonPulse {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.03) 0%, 
+    rgba(255, 255, 255, 0.06) 50%, 
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+}
+
+.skeletonItem {
+  height: 84px;
+  margin-bottom: 1rem;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+  .panel {
+    width: 100vw;
+  }
+}
