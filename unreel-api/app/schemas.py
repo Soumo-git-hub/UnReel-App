@@ -108,6 +108,7 @@ class TranslationResponse(BaseModel):
 class ChatRequest(BaseModel):
     analysisId: str = Field(..., description="ID of the analysis to chat about")
     message: str = Field(..., description="Message to send to the AI")
+    persona: Optional[str] = Field(None, description="Custom personality tags and instructions for the chatbot")
 
 
 class ChatResponse(BaseModel):

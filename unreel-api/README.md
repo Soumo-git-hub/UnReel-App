@@ -477,6 +477,51 @@ Chat with the AI about a previously analyzed video.
   docker-compose logs
   ```
 
+## Deployment (Hugging Face Spaces)
+
+This backend is optimized for deployment on Hugging Face Spaces using the **Docker** SDK. Because the API sits inside a subfolder (`unreel-api/`) of the main repository, you **cannot** just push the root repository to Hugging Face. You must push only the `unreel-api` directory using Git Subtrees.
+
+### Step 1: Create the Space
+1. Go to Hugging Face and create a new Space.
+2. Select **Docker** as the Space SDK.
+3. Choose **Blank** (or any basic template, the Dockerfile will override it).
+
+### Step 2: Push the Code
+Open a terminal in the **root** of your `UnReel-App` folder (not inside the `unreel-api` folder) and run this exact sequence of commands to carve out the backend and push it:
+
+```bash
+# 1. Commit any pending local changes in your root repo first
+git add .
+git commit -m "chore: ready for deployment"
+
+# 2. Add your Hugging Face space as a remote (ONLY DO THIS ONCE)
+# Replace 'soumo-huggs/Un-Reel-1' with your actual space name
+git remote add hf https://huggingface.co/spaces/soumo-huggs/Un-Reel-1
+
+# 3. Create a temporary branch containing ONLY the unreel-api folder
+git subtree split --prefix unreel-api --branch deploy-hf
+
+# 4. Force push that temporary branch to the 'main' branch of your HF Space
+git push hf deploy-hf:main --force
+
+# 5. Clean up by deleting the temporary branch locally
+git branch -D deploy-hf
+```
+
+### Step 3: Configure Environment Variables
+Hugging Face Spaces are public by default. **Never put your API keys in the code.** You must configure secrets in the Hugging Face UI.
+
+1. Go to your Space settings on Hugging Face.
+2. Scroll down to **Variables and secrets**.
+3. Add the following **Secrets** (exact names required):
+   - `GEMINI_API_KEY`: Your Google AI Studio key.
+   - `DATABASE_URL`: Your Supabase PostgreSQL connection string.
+   - `SERPER_API_KEY`: Your Serper.dev key.
+   - `RAPID_API_KEY`: Your RapidAPI key.
+   - `FIREBASE_SERVICE_ACCOUNT_JSON`: Paste the **entire JSON string** from your Firebase admin SDK file.
+
+**Note:** You do not need to configure `HOST` or `PORT`. The Space will automatically build the React/FastAPI container using the `Dockerfile` and expose it correctly.
+
 ## Development Guidelines
 
 ### Code Structure

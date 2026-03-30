@@ -29,7 +29,7 @@ async def chat_with_video(
         
         context = _prepare_analysis_context(analysis)
         analysis_svc = AnalysisService()
-        reply = await analysis_svc.ai_service.chat_with_video(context, request.message)
+        reply = await analysis_svc.ai_service.chat_with_video(context, request.message, request.persona)
         
         # Save to database
         chat_msg = ChatMessage(

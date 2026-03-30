@@ -363,27 +363,43 @@ Return ONLY a JSON array."""
             logger.error(f"Error in RAG refinement: {e}", exc_info=True)
             return claims  # fallback to original unrefined claims
 
-    async def chat_with_video(self, context: str, message: str) -> str:
+    async def chat_with_video(self, context: str, message: str, persona: Optional[str] = None) -> str:
         """
-        Chat with the AI about a video using the provided context.
+        Chat with the AI about a video using highly structured prompt engineering.
         
         Args:
             context: Video analysis context
             message: User's chat message
+            persona: Optional string of custom traits and instructions
             
         Returns:
             AI's response to the chat message
         """
         try:
-            prompt = f"""Based on the following video context, answer the user's question:
+            system_role = (
+                "You are UnReel AI, an advanced video intelligence assistant. "
+                "Your primary job is to answer the user's question based on the provided Video Context. "
+                "If the video context lacks the answer, state that clearly, though you may supplement with general knowledge if helpful."
+            )
+
+            persona_block = ""
+            if persona:
+                persona_block = f"""
+--- USER PERSONA & STYLE DIRECTIVES ---
+The user has configured the following strict rules for your behavior and formatting:
+{persona}
+CRITICAL: You MUST fully adopt this persona, tone, and formatting style for your entire response.
+"""
             
-            Video Context:
-            {context}
-            
-            User Question:
-            {message}
-            
-            Provide a concise and helpful answer:"""
+            prompt = f"""{system_role}
+
+--- VIDEO CONTEXT ---
+{context}
+{persona_block}
+--- USER QUESTION ---
+{message}
+
+Provide your response below:"""
 
             response = await self.model.generate_content_async(prompt)
             return response.text
