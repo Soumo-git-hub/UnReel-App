@@ -19,6 +19,13 @@ class Analysis(Base):
     translation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     keyTopics: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
     mentionedResources: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    locationContext: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    educationalInsights: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    shoppingItems: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    factCheck: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    enhancedResources: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    musicContext: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
+    availableFeatures: Mapped[Optional[JSON]] = mapped_column(JSON, nullable=True)
     fullTranscript: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     detectedLanguage: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     userId: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
@@ -30,7 +37,7 @@ class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    analysisId: Mapped[str] = mapped_column(String, nullable=False)
+    analysisId: Mapped[str] = mapped_column(String, index=True, nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)
     reply: Mapped[str] = mapped_column(Text, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(DateTime, default=func.now())

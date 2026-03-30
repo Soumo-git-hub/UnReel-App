@@ -69,6 +69,48 @@ def add_user_id_column():
         logger.error(f"Error adding userId column: {e}")
         raise
 
+def add_multi_lens_columns():
+    """
+    Add the multi-lens JSON columns to the analyses table if they don't exist.
+    """
+    columns_to_add = [
+        "locationContext",
+        "educationalInsights",
+        "shoppingItems",
+        "factCheck",
+        "enhancedResources",
+        "musicContext",
+        "availableFeatures"
+    ]
+    
+    try:
+        with engine.connect() as connection:
+            for col in columns_to_add:
+                check_column_sql = f"""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='analyses' AND column_name='{col}';
+                """
+                result = connection.execute(text(check_column_sql))
+                column_exists = result.fetchone()
+                
+                if not column_exists:
+                    add_column_sql = f"""
+                    ALTER TABLE analyses 
+                    ADD COLUMN "{col}" JSON;
+                    """
+                    connection.execute(text(add_column_sql))
+                    logger.info(f"Successfully added {col} column to analyses table")
+                else:
+                    logger.info(f"{col} column already exists in analyses table")
+                    
+            connection.commit()
+            
+    except Exception as e:
+        logger.error(f"Error adding multi-lens columns: {e}")
+        raise
+
 if __name__ == "__main__":
     add_detected_language_column()
     add_user_id_column()
+    add_multi_lens_columns()

@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import asyncio
 from typing import Dict, Any
 
 from sqlalchemy.orm import Session
@@ -8,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.services.media_service import MediaService
 from app.services.ai_service import AiService
 from app.services.translation_service import TranslationService
+from app.services.search_service import SearchService
 from app.models import Analysis, ChatMessage
 
 # Configure logging
@@ -17,13 +19,14 @@ logger = logging.getLogger(__name__)
 _media_service = None
 _ai_service = None
 _translation_service = None
+_search_service = None
 
 class AnalysisService:
     """Service for orchestrating video analysis workflow."""
     
     def __init__(self):
         """Initialize the AnalysisService with required services (cached)."""
-        global _media_service, _ai_service, _translation_service
+        global _media_service, _ai_service, _translation_service, _search_service
         
         if _media_service is None:
             _media_service = MediaService()
@@ -31,19 +34,33 @@ class AnalysisService:
             _ai_service = AiService()
         if _translation_service is None:
             _translation_service = TranslationService()
+        if _search_service is None:
+            _search_service = SearchService()
             
         self.media_service = _media_service
         self.ai_service = _ai_service
         self.translation_service = _translation_service
+        self.search_service = _search_service
 
-    async def create_analysis(self, db: Session, url: str, user_id: str = None) -> Dict[str, Any]:
+    async def create_analysis(self, db: Session, url: str, user_id: str = None,
+                              focus_location: bool = True,
+                              focus_educational: bool = False,
+                              focus_shopping: bool = False,
+                              focus_fact_check: bool = False,
+                              focus_resource: bool = False,
+                              focus_music: bool = False) -> Dict[str, Any]:
         """
-        Create a new video analysis.
+        Create a new video analysis with Multi-Lens support.
         
         Args:
             db: Database session
             url: URL of the video to analyze
             user_id: ID of the user requesting analysis
+            focus_location: Enable Location Lens
+            focus_educational: Enable Educational Lens
+            focus_shopping: Enable Shopping Lens
+            focus_fact_check: Enable Fact-Check Lens
+            focus_resource: Enable Link-Detective Lens
             
         Returns:
             Dictionary containing analysis results
@@ -82,14 +99,20 @@ class AnalysisService:
             detected_language = self.translation_service.detect_language(transcript)
             logger.info(f"Detected transcript language: {detected_language}")
             
-            # Analyze content with AI
+            # Analyze content with AI (pass lens toggles)
             ai_result = await self.ai_service.get_analysis(
                 audio_path, 
                 frame_paths, 
                 caption, 
                 transcript,
                 metadata,
-                detected_language
+                detected_language,
+                focus_location=focus_location,
+                focus_educational=focus_educational,
+                focus_shopping=focus_shopping,
+                focus_fact_check=focus_fact_check,
+                focus_resource=focus_resource,
+                focus_music=focus_music
             )
             
             # Update analysis with results
@@ -101,8 +124,55 @@ class AnalysisService:
             analysis.translation = ai_result["translation"]
             analysis.keyTopics = ai_result["keyTopics"]
             analysis.mentionedResources = ai_result["mentionedResources"]
-            analysis.fullTranscript = transcript  # Use the actual transcript
-            analysis.detectedLanguage = detected_language  # Store detected language
+            analysis.locationContext = ai_result.get("locationContext")
+            analysis.educationalInsights = ai_result.get("educationalInsights")
+            analysis.shoppingItems = ai_result.get("shoppingItems")
+            analysis.factCheck = ai_result.get("factCheck")
+            analysis.enhancedResources = ai_result.get("enhancedResources")
+            analysis.musicContext = ai_result.get("musicContext")
+            analysis.availableFeatures = ai_result.get("availableFeatures")
+            analysis.fullTranscript = transcript
+            analysis.detectedLanguage = detected_language
+            
+            # ─── RAG ENRICHMENT PASS (CONCURRENT) ──────────────────────
+            # Run all RAG passes in parallel for maximum throughput
+            logger.info("Starting RAG enrichment pass...")
+            
+            rag_tasks = {}
+            
+            if focus_fact_check and analysis.factCheck:
+                logger.info(f"RAG: Verifying {len(analysis.factCheck)} claims with Google Search...")
+                rag_tasks["factCheck"] = self.search_service.verify_claims(analysis.factCheck)
+            
+            if focus_resource and analysis.enhancedResources:
+                logger.info(f"RAG: Finding URLs for {len(analysis.enhancedResources)} resources...")
+                rag_tasks["resources"] = self.search_service.find_resource_urls(analysis.enhancedResources)
+            
+            if focus_shopping and analysis.shoppingItems:
+                logger.info(f"RAG: Finding purchase links for {len(analysis.shoppingItems)} items...")
+                rag_tasks["shopping"] = self.search_service.find_product_urls(analysis.shoppingItems)
+            
+            if rag_tasks:
+                keys = list(rag_tasks.keys())
+                results = await asyncio.gather(*rag_tasks.values(), return_exceptions=True)
+                rag_results = dict(zip(keys, results))
+                
+                # Apply fact-check results (needs a second AI refinement pass)
+                if "factCheck" in rag_results and not isinstance(rag_results["factCheck"], Exception):
+                    refined_claims = await self.ai_service.refine_with_evidence(rag_results["factCheck"])
+                    analysis.factCheck = refined_claims
+                    logger.info("RAG: Fact-check claims refined with live evidence.")
+                
+                if "resources" in rag_results and not isinstance(rag_results["resources"], Exception):
+                    analysis.enhancedResources = rag_results["resources"]
+                    logger.info("RAG: Resource URLs resolved.")
+                
+                if "shopping" in rag_results and not isinstance(rag_results["shopping"], Exception):
+                    analysis.shoppingItems = rag_results["shopping"]
+                    logger.info("RAG: Shopping URLs resolved.")
+            
+            
+            # ─── END RAG ENRICHMENT ─────────────────────────────────────
             
             db.commit()
             db.refresh(analysis)
@@ -130,8 +200,15 @@ class AnalysisService:
                     "summary": analysis.summary,
                     "translation": analysis.translation,
                     "keyTopics": analysis.keyTopics,
-                    "mentionedResources": analysis.mentionedResources
+                    "mentionedResources": analysis.mentionedResources,
+                    "locationContext": analysis.locationContext,
+                    "educationalInsights": analysis.educationalInsights,
+                    "shoppingItems": analysis.shoppingItems,
+                    "factCheck": analysis.factCheck,
+                    "enhancedResources": analysis.enhancedResources,
+                    "musicContext": analysis.musicContext,
                 },
+                "availableFeatures": analysis.availableFeatures,
                 "fullTranscript": analysis.fullTranscript,
                 "detectedLanguage": analysis.detectedLanguage,
                 "supportedLanguages": self.translation_service.get_supported_languages(),

@@ -7,12 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import analysis_router, chat_router
 from app.database import Base, engine
 from app.core.config import settings
-from app.database_migration import add_detected_language_column
+from app.database_migration import add_detected_language_column, add_user_id_column, add_multi_lens_columns
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    force=True
 )
 logger = logging.getLogger(__name__)
 
@@ -21,11 +22,10 @@ try:
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
     
-    # Add detectedLanguage column if it doesn't exist
+    # Run database migrations
     add_detected_language_column()
-    # Add userId column if it doesn't exist
-    from app.database_migration import add_user_id_column
     add_user_id_column()
+    add_multi_lens_columns()
     logger.info("Database migration completed successfully")
 except Exception as e:
     logger.error(f"Error creating database tables: {e}")

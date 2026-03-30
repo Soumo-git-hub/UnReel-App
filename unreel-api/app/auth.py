@@ -16,7 +16,6 @@ def initialize_firebase():
     """Helper to initialize firebase if not already done."""
     try:
         if not firebase_admin._apps:
-            from app.core.config import settings
             service_account_path = settings.FIREBASE_SERVICE_ACCOUNT_PATH
             service_account_json = settings.FIREBASE_SERVICE_ACCOUNT_JSON
             
@@ -44,8 +43,10 @@ def initialize_firebase():
     except Exception as e:
         logger.error(f"Error initializing Firebase Admin: {e}")
 
+# Initialize Firebase once at module load
+initialize_firebase()
+
 async def get_current_user(authorization: str = Header(None)):
-    initialize_firebase()
     
     if not authorization:
         raise HTTPException(

@@ -26,7 +26,7 @@ def load_and_run_test(test_file: str) -> Tuple[bool, str]:
     """
     try:
         # Special handling for unittest-based tests
-        if "test_translation_service" in test_file:
+        if "test_translation_service" in test_file or "test_backend_upgrade" in test_file:
             # Load the test module as a unittest
             loader = unittest.TestLoader()
             suite = loader.discover(os.path.dirname(test_file), pattern=os.path.basename(test_file))
@@ -51,12 +51,20 @@ def load_and_run_test(test_file: str) -> Tuple[bool, str]:
         # Run the test if it has a main function
         if hasattr(test_module, 'test_api'):
             test_module.test_api()
+        elif hasattr(test_module, 'test_api_multi_lens'):
+            test_module.test_api_multi_lens()
         elif hasattr(test_module, 'test_full_analysis'):
             import asyncio
             asyncio.run(test_module.test_full_analysis())
+        elif hasattr(test_module, 'test_full_analysis_with_all_lenses'):
+            import asyncio
+            asyncio.run(test_module.test_full_analysis_with_all_lenses())
         elif hasattr(test_module, 'test_media_service'):
             import asyncio
             asyncio.run(test_module.test_media_service())
+        elif hasattr(test_module, 'test_media_service_tiered_download'):
+            import asyncio
+            asyncio.run(test_module.test_media_service_tiered_download())
         elif hasattr(test_module, 'test_speech_service'):
             test_module.test_speech_service()
         else:
@@ -83,7 +91,8 @@ def main():
         "test_full_analysis.py",
         "test_media_service.py",
         "test_speech.py",
-        "test_translation_service.py"  # Add our new test file
+        "test_translation_service.py",
+        "test_backend_upgrade.py"  # Added our comprehensive upgrade suite
     ]
     
     results: Dict[str, Tuple[bool, str]] = {}

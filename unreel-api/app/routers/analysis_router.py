@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import schemas
+from app.models import Analysis
 from app.services.analysis_service import AnalysisService
 from app.services.translation_service import TranslationService
 from app.database import get_db
@@ -25,7 +26,6 @@ async def list_analyses(
     """
     List user's analysis history.
     """
-    from app.models import Analysis
     user_id = current_user.get("uid")
     analyses = db.query(Analysis).filter(Analysis.userId == user_id).order_by(Analysis.createdAt.desc()).limit(20).all()
     # Map id to analysisId for schema compatibility
@@ -70,11 +70,17 @@ async def create_analysis(
         # Create analysis service
         analysis_service = AnalysisService()
         
-        # Process the analysis
+        # Process the analysis with lens toggles
         analysis = await analysis_service.create_analysis(
             db=db, 
             url=request.url,
-            user_id=current_user.get("uid")
+            user_id=current_user.get("uid"),
+            focus_location=request.focusLocation,
+            focus_educational=request.focusEducational,
+            focus_shopping=request.focusShopping,
+            focus_fact_check=request.focusFactCheck,
+            focus_resource=request.focusResource,
+            focus_music=request.focusMusic
         )
         
         logger.info(f"Analysis completed successfully for URL: {request.url}")
@@ -132,7 +138,6 @@ async def translate_transcript(
         logger.info(f"Translating transcript for analysis {analysis_id} to {request.target_language}")
         
         # Get the analysis from database
-        from app.models import Analysis
         analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
         
         if not analysis:
@@ -141,7 +146,7 @@ async def translate_transcript(
         if not analysis.fullTranscript:
             raise HTTPException(status_code=400, detail="No transcript available for translation")
         
-        # Create translation service
+        # Use module-level cached translation service
         translation_service = TranslationService()
         
         # Check if target language is supported
@@ -190,7 +195,6 @@ async def get_analysis(
     """
     Get an existing analysis by ID.
     """
-    from app.models import Analysis
     analysis = db.query(Analysis).filter(Analysis.id == analysis_id).first()
     
     if not analysis:
@@ -207,9 +211,17 @@ async def get_analysis(
         },
         "content": {
             "summary": analysis.summary,
+            "translation": analysis.translation,
             "keyTopics": analysis.keyTopics,
-            "mentionedResources": analysis.mentionedResources
+            "mentionedResources": analysis.mentionedResources,
+            "locationContext": analysis.locationContext,
+            "educationalInsights": analysis.educationalInsights,
+            "shoppingItems": analysis.shoppingItems,
+            "factCheck": analysis.factCheck,
+            "enhancedResources": analysis.enhancedResources,
+            "musicContext": analysis.musicContext,
         },
+        "availableFeatures": analysis.availableFeatures,
         "fullTranscript": analysis.fullTranscript,
         "detectedLanguage": analysis.detectedLanguage,
         "createdAt": analysis.createdAt,

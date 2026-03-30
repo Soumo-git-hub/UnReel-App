@@ -1,13 +1,11 @@
-import json
 import logging
 from typing import Any, Dict
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import schemas
-from app.services.ai_service import AiService
-from app.models import Analysis
+from app.services.analysis_service import AnalysisService
+from app.models import Analysis, ChatMessage
 from app.database import get_db
 from app.auth import get_current_user
 
@@ -16,52 +14,51 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
-
 @router.post("", response_model=schemas.ChatResponse)
 async def chat_with_video(
     request: schemas.ChatRequest,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """
-    Chat with the AI about a previously analyzed video.
-    
-    Args:
-        request: Chat request containing analysis ID and message
-        db: Database session
-        
-    Returns:
-        Chat response with AI reply
-        
-    Raises:
-        HTTPException: If chat fails or analysis not found
-    """
     try:
         logger.info(f"Chat request for analysis ID: {request.analysisId}")
         
-        # Get the analysis record
         analysis = db.query(Analysis).filter(Analysis.id == request.analysisId).first()
         if not analysis:
-            error_msg = "Analysis not found"
-            logger.warning(error_msg)
-            raise HTTPException(status_code=404, detail=error_msg)
+            raise HTTPException(status_code=404, detail="Analysis not found")
         
-        # Prepare context from analysis
         context = _prepare_analysis_context(analysis)
+        analysis_svc = AnalysisService()
+        reply = await analysis_svc.ai_service.chat_with_video(context, request.message)
         
-        # Create AI service
-        ai_service = AiService()
+        # Save to database
+        chat_msg = ChatMessage(
+            analysisId=request.analysisId,
+            message=request.message,
+            reply=reply
+        )
+        db.add(chat_msg)
+        db.commit()
         
-        # Get AI response
-        reply = await ai_service.chat_with_video(context, request.message)
-        
-        logger.info(f"Chat response generated successfully for analysis ID: {request.analysisId}")
         return {"reply": reply}
-        
+    except HTTPException:
+        raise
     except Exception as e:
-        error_msg = f"Chat failed: {str(e)}"
-        logger.error(error_msg, exc_info=True)
-        raise HTTPException(status_code=500, detail=error_msg)
+        logger.error(f"Chat failed: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="An error occurred while processing your chat request. Please try again.")
+
+@router.get("/{analysis_id}")
+async def get_chat_history(
+    analysis_id: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        messages = db.query(ChatMessage).filter(ChatMessage.analysisId == analysis_id).order_by(ChatMessage.createdAt.asc()).all()
+        return {"messages": messages}
+    except Exception as e:
+        logger.error(f"Failed to fetch chat history: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to fetch chat history.")
 
 
 def _prepare_analysis_context(analysis: Analysis) -> str:

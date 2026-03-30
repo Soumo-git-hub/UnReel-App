@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     INSTAGRAM_COOKIE_FILE: Optional[str] = None
     FIREBASE_SERVICE_ACCOUNT_PATH: Optional[str] = None
     FIREBASE_SERVICE_ACCOUNT_JSON: Optional[str] = None
+    RAPID_API_KEY: Optional[str] = None
+    SERPER_API_KEY: Optional[str] = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
