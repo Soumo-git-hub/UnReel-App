@@ -37,9 +37,6 @@ RUN chown -R user:user /app
 # Switch to non-root user
 USER user
 
-# Warm-up: Pre-download the Whisper 'base' model during build to reduce first-request latency
-RUN python -c "import whisper; whisper.load_model('base')"
-
 # Expose port (HF uses 7860)
 EXPOSE 7860
 
