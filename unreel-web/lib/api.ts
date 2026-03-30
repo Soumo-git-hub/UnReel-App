@@ -2,6 +2,10 @@ import { auth } from './firebase';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
+if (typeof window !== 'undefined') {
+  console.log("🔌 UnReel API Connected to:", API_BASE_URL);
+}
+
 if (!process.env.NEXT_PUBLIC_API_URL && typeof window !== 'undefined') {
   console.warn("⚠️ API Base URL is missing! (NEXT_PUBLIC_API_URL). Falling back to localhost.");
 }
@@ -22,12 +26,24 @@ async function getAuthHeaders(providedUser?: any) {
   return headers;
 }
 
-export async function analyzeVideo(videoUrl: string, user?: any) {
+export async function analyzeVideo(videoUrl: string, user?: any, lenses?: Record<string, boolean>) {
   try {
+    const body: any = { 
+      url: videoUrl,
+      focusResource: true // Link-detective is enabled by default
+    };
+    if (lenses) {
+      body.focusEducational = lenses.educational;
+      body.focusShopping = lenses.shopping;
+      body.focusLocation = lenses.location;
+      body.focusFactCheck = lenses.factCheck;
+      body.focusMusic = lenses.music;
+    }
+
     const response = await fetch(`${API_BASE_URL}/analyze`, {
       method: "POST",
       headers: await getAuthHeaders(user),
-      body: JSON.stringify({ url: videoUrl }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -61,14 +77,15 @@ export async function listHistory(user?: any) {
   }
 }
 
-export async function chatAboutVideo(analysisId: string, message: string) {
+export async function chatAboutVideo(analysisId: string, message: string, user?: any, persona?: string) {
   try {
     const response = await fetch(`${API_BASE_URL}/chat`, {
       method: "POST",
-      headers: await getAuthHeaders(),
+      headers: await getAuthHeaders(user),
       body: JSON.stringify({
         analysisId: analysisId,
         message: message,
+        persona: persona || null
       }),
     });
 
@@ -83,11 +100,11 @@ export async function chatAboutVideo(analysisId: string, message: string) {
   }
 }
 
-export async function translateTranscript(analysisId: string, targetLanguage: string) {
+export async function translateTranscript(analysisId: string, targetLanguage: string, user?: any) {
   try {
     const response = await fetch(`${API_BASE_URL}/analyze/${analysisId}/translate`, {
       method: "POST",
-      headers: await getAuthHeaders(),
+      headers: await getAuthHeaders(user),
       body: JSON.stringify({ target_language: targetLanguage }),
     });
 
@@ -103,11 +120,11 @@ export async function translateTranscript(analysisId: string, targetLanguage: st
   }
 }
 
-export async function getAnalysis(analysisId: string) {
+export async function getAnalysis(analysisId: string, user?: any) {
   try {
     const response = await fetch(`${API_BASE_URL}/analyze/${analysisId}`, {
       method: "GET",
-      headers: await getAuthHeaders(),
+      headers: await getAuthHeaders(user),
     });
 
     if (!response.ok) {
@@ -118,6 +135,25 @@ export async function getAnalysis(analysisId: string) {
     return await response.json();
   } catch (error) {
     console.error("Error fetching analysis:", error);
+    throw error;
+  }
+}
+
+export async function getChatHistory(analysisId: string, user?: any) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/chat/${analysisId}`, {
+      method: "GET",
+      headers: await getAuthHeaders(user),
+    });
+
+    if (!response.ok) {
+       const errorData = await response.json().catch(() => ({}));
+       throw new Error(errorData.detail || "Failed to fetch chat history");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
     throw error;
   }
 }

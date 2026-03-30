@@ -4,6 +4,7 @@ import React from 'react';
 import { m } from 'framer-motion';
 import { ExternalLink, Clock, History, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import styles from './HistoryPanel.module.css';
 
 interface HistoryPanelProps {
@@ -11,15 +12,29 @@ interface HistoryPanelProps {
   onToggle: () => void;
   data: any[];
   isLoading: boolean;
+  isAnalysisPage?: boolean;
+  user: any;
+  onLogin: () => void;
+  hideHandle?: boolean;
 }
 
-const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onToggle, data, isLoading }) => {
+const HistoryPanel: React.FC<HistoryPanelProps> = ({ 
+  isOpen, 
+  onToggle, 
+  data, 
+  isLoading, 
+  isAnalysisPage, 
+  user, 
+  onLogin,
+  hideHandle 
+}) => {
   const router = useRouter();
+  const { theme, resolvedTheme } = useTheme();
 
   return (
     <m.div 
       initial={false}
-      animate={{ x: isOpen ? 0 : -390 }}
+      animate={{ x: isOpen ? 0 : '-100%' }}
       transition={{ 
         duration: 0.5,
         ease: [0.19, 1, 0.22, 1]
@@ -27,23 +42,29 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onToggle, data, isL
       className={styles.panel}
     >
       {/* Attached Toggle Handle outside panel bounding box */}
-      <m.button 
-        className={styles.handle} 
-        onClick={onToggle}
-        title="History"
-        animate={{ 
-          backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 255, 255, 0.9)',
-          color: isOpen ? '#00ffff' : '#000'
-        }}
-        transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
-      >
-        <m.div
-          animate={{ rotate: isOpen ? 90 : 0 }}
-          transition={{ duration: 0.3 }}
+      {!hideHandle && (
+        <m.button 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ 
+            opacity: 1, 
+            x: 0,
+            backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 255, 255, 0.9)',
+            color: isOpen ? (resolvedTheme === 'dark' ? '#00ffff' : '#0D9488') : '#000'
+          }}
+          exit={{ opacity: 0, x: -20 }}
+          className={`${styles.handle} ${isAnalysisPage ? styles.analysisHandle : ''}`} 
+          onClick={onToggle}
+          title="History"
+          transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
         >
-          {isOpen ? <X size={22} /> : <History size={22} />}
-        </m.div>
-      </m.button>
+          <m.div
+            animate={{ rotate: isOpen ? 90 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isOpen ? <X size={22} /> : <History size={22} />}
+          </m.div>
+        </m.button>
+      )}
 
       <div className={styles.content}>
         <div className={styles.header}>
@@ -54,7 +75,15 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onToggle, data, isL
         </div>
 
         <div className={styles.list}>
-          {isLoading ? (
+          {!user ? (
+            <div className={styles.authAction}>
+              <h3>Sign in to see your history</h3>
+              <p>Keep track of all your past analyses and pick up where you left off.</p>
+              <button className={styles.authBtn} onClick={onLogin}>
+                Login or Sign Up
+              </button>
+            </div>
+          ) : isLoading ? (
             Array(5).fill(0).map((_, i) => (
               <div key={i} className={styles.skeletonPulse} style={{ 
                 animationDelay: `${i * 0.1}s`,
@@ -96,7 +125,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ isOpen, onToggle, data, isL
                     whileTap={{ scale: 0.98 }}
                     className={styles.item}
                     onClick={() => {
-                      router.push(`/analysis/${item.analysisId}`);
+                      window.open(`/analysis/${item.analysisId}`, '_blank', 'noopener,noreferrer');
                       onToggle();
                     }}
                   >

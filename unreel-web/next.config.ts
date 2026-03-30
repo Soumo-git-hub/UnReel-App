@@ -21,8 +21,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'soumo-huggs-un-reel.hf.space',
+        hostname: '*.mzstatic.com',
       },
+      {
+         protocol: 'https',
+         hostname: '*.fbcdn.net',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.instagram.com',
+      }
     ],
   },
 };

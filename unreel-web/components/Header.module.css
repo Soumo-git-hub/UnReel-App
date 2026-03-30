@@ -11,8 +11,54 @@
 }
 
 .leftIcons {
+  flex: 1;
   display: flex;
   gap: 1.5rem;
+  justify-content: flex-start;
+}
+
+.centerLogo {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.logo {
+  height: 24px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.logoText {
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.centerLogo:hover .logo {
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(0, 255, 255, 0.2));
+  transform: scale(1.05);
+}
+
+.centerLogo:hover .logoText {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.centerLogo:hover .logoText {
+  color: var(--accent);
+}
+
+.rightIcons {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
 }
 
 .iconButton {
@@ -29,7 +75,7 @@
 }
 
 .iconButton:hover {
-  background: rgba(0, 255, 255, 0.1);
+  background: var(--aurora-1);
   transform: translateY(-2px);
 }
 

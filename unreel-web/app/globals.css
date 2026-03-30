@@ -1,10 +1,25 @@
 :root {
+  --bg: #F1F3F6;
+  --card-bg: rgba(255, 255, 255, 0.7); /* Shared glassiness logic for consistency */
+  --text: #0F172A;
+  --text-secondary: #475569;
+  --accent: #0D9488;
+  --border: rgba(15, 23, 42, 0.1);
+  --aurora-1: rgba(124, 58, 237, 0.18);
+  --aurora-2: rgba(0, 255, 255, 0.15);
+  --aurora-3: rgba(167, 139, 250, 0.1);
+}
+
+/* Original Dark Mode */
+.dark {
   --bg: #10101C;
   --accent: #00FFFF;
+  --accent-soft: rgba(0, 255, 255, 0.1);
   --text: #EAE8FF;
   --text-secondary: #D1D5DB;
   --aurora-1: rgba(102, 51, 153, 0.3);
   --aurora-2: rgba(0, 255, 255, 0.15);
+  --aurora-3: rgba(138, 43, 226, 0.08);
   --card-bg: rgba(255, 255, 255, 0.03);
   --border: rgba(0, 255, 255, 0.2);
 }

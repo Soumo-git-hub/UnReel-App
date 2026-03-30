@@ -26,6 +26,7 @@
   left: -20%;
   animation: aurora-float 20s infinite ease-in-out;
   transform: translate3d(0,0,0);
+  will-change: transform;
 }
 
 .auroraCircle2 {
@@ -38,6 +39,7 @@
   right: -15%;
   animation: aurora-float-reverse 25s infinite ease-in-out;
   transform: translate3d(0,0,0);
+  will-change: transform;
 }
 
 .auroraCircle3 {
@@ -45,11 +47,12 @@
   width: 60vw;
   height: 60vw;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(138, 43, 226, 0.08) 0%, transparent 60%);
+  background: radial-gradient(circle at center, var(--aurora-3) 0%, transparent 60%);
   top: 35%;
   left: 25%;
   animation: aurora-float 30s infinite ease-in-out;
   transform: translate3d(0,0,0);
+  will-change: transform;
 }
 
 

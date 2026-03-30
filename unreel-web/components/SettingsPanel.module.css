@@ -3,13 +3,14 @@
 }
 
 .panel {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
   width: 390px;
   height: 100vh;
-  background: rgba(10, 10, 15, 0.95);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border);
   padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
@@ -17,6 +18,7 @@
   z-index: 2000;
   overflow: visible;
   pointer-events: none; /* Let clicks pass through empty areas */
+  will-change: transform;
 }
 
 .content {
@@ -30,7 +32,8 @@
 .handle {
   position: absolute;
   left: -42px;
-  top: 15%;
+  top: 42%;
+  transform: translateY(-50%);
   width: 42px;
   height: 90px;
   display: flex;
@@ -42,11 +45,17 @@
   box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
   z-index: 2001;
   pointer-events: auto; /* Re-enable for handle */
+  will-change: transform, width, left;
 }
 
 .handle:hover {
   width: 52px;
   left: -52px;
+}
+
+.analysisHandle {
+  top: 6.6rem !important;
+  transform: none !important;
 }
 
 .scrollArea {
@@ -87,24 +96,24 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #00ffff; /* Changed from magenta to cyan */
+  color: var(--accent);
 }
 
 .titleInfo h2 {
   font-size: 1.5rem;
   font-weight: 300;
-  color: #fff;
+  color: var(--text);
   letter-spacing: 0.5px;
 }
 
 .userSection {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
 }
 
 .userAvatar {
@@ -116,13 +125,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
 }
 
 .avatarPlaceholder {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #000;
+  color: var(--bg);
 }
 
 .userAvatar img {
@@ -138,12 +147,13 @@
 
 .userName {
   font-weight: 500;
-  color: #fff;
+  color: var(--text);
 }
 
 .userEmail {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 .settingsList {
@@ -162,7 +172,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
   font-weight: 600;
   padding-left: 0.25rem;
 }
@@ -181,11 +191,11 @@
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--card-bg);
 }
 
 .settingItem:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--aurora-1);
   color: var(--accent);
   transform: translateX(-4px);
 }
@@ -198,8 +208,8 @@
 }
 
 .activeWrapper {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(0, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
 }
 
 .itemRight {
@@ -236,8 +246,8 @@
 }
 
 .themeBtn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1rem 0.5rem;
   display: flex;
@@ -249,23 +259,35 @@
   color: var(--text-secondary);
 }
 
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 1.5rem;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .themeBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--aurora-1);
+  border-color: var(--accent);
 }
 
 .themeBtnActive {
-  background: rgba(0, 255, 255, 0.08);
+  background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
-  box-shadow: none; /* Removed glow */
+  box-shadow: 0 4px 15px var(--accent-soft);
 }
 
 .themeIcon {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--aurora-1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,7 +295,7 @@
 }
 
 .themeBtnActive .themeIcon {
-  background: rgba(0, 255, 255, 0.1);
+  background: var(--accent-soft);
 }
 
 .themeBtn span {
@@ -296,20 +318,63 @@
   color: var(--text-secondary);
 }
 
-.inputGroup input {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.inputGroup input, .inputGroup textarea {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   padding: 0.6rem 0.8rem;
   border-radius: 8px;
-  color: #fff;
+  color: var(--text);
   font-size: 0.9rem;
   outline: none;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.inputGroup textarea:focus, .inputGroup input:focus {
+  border-color: var(--accent);
+}
+
+.tagGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tagBtn {
+  background: var(--aurora-1);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tagBtn:hover {
+  background: var(--aurora-2);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.tagActive {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.tagActive:hover {
+  background: var(--accent);
+  color: var(--bg);
 }
 
 .saveBtn {
   width: 100%;
   background: var(--accent);
-  color: #000;
+  color: var(--bg);
   border: none;
   padding: 0.6rem;
   border-radius: 8px;
@@ -334,13 +399,13 @@
   transition: all 0.3s ease;
 }
 
-.switch { background: rgba(255, 255, 255, 0.1); }
+.switch { background: var(--border); }
 .switchActive { background: var(--accent); }
 
 .switchHandle {
   width: 16px;
   height: 16px;
-  background: #fff;
+  background: var(--bg);
   border-radius: 50%;
   transition: all 0.3s ease;
 }
@@ -373,21 +438,23 @@
 }
 
 .itemIcon {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
+  opacity: 0.5;
 }
 
 .settingItem:hover .itemIcon {
-  color: #00ffff;
+  color: var(--accent);
+  opacity: 1;
 }
 
 .itemLabel {
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text);
 }
 
 .itemValue {
   font-size: 0.8rem;
-  color: #00ffff;
+  color: var(--accent);
   font-weight: 500;
 }
 
@@ -415,6 +482,60 @@
 
 @media (max-width: 768px) {
   .panel {
-    width: 100vw;
+    width: 80vw;
   }
+  
+  .handle {
+    top: 10rem !important; /* Move handles down to avoid clashing with header buttons */
+    width: 32px !important;
+    height: 60px !important;
+    left: -32px !important;
+    border-radius: 10px 0 0 10px;
+    transform: none !important;
+  }
+}
+
+.authAction {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.authAction h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.authAction p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.authBtn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  max-width: 240px;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+}
+
+.authBtn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0, 255, 255, 0.4);
 }

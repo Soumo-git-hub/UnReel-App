@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import styles from './AuthModal.module.css';
+import styles from '@/components/Auth/AuthModal.module.css';
 
 import { User } from 'firebase/auth';
 
@@ -24,6 +24,28 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  
+  const getFriendlyError = (err: any) => {
+    const message = err.message || '';
+    if (message.includes('auth/invalid-credential') || 
+        message.includes('auth/wrong-password') || 
+        message.includes('auth/user-not-found')) {
+      return "Hmm, those details don't match our records. Please try again.";
+    }
+    if (message.includes('auth/email-already-in-use')) {
+      return "This email is already registered. Try signing in instead?";
+    }
+    if (message.includes('auth/weak-password')) {
+      return "That password is a bit too easy. Try at least 6 characters.";
+    }
+    if (message.includes('auth/too-many-requests')) {
+      return "Whoa, take a breather! Too many attempts. Try again in a bit.";
+    }
+    if (message.includes('auth/network-request-failed')) {
+      return "Check your internet connection and let's try again.";
+    }
+    return message.replace('Firebase: ', '').replace(/Error \(auth\/.*\)\.?/, '').trim() || "Something went wrong. Let's try again.";
+  };
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -32,7 +54,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       const user = await loginWithGoogle();
       onSuccess(user);
     } catch (err: any) {
-      setError(err.message || 'Failed to login with Google');
+      setError(getFriendlyError(err));
     } finally {
       setLoading(false);
     }
@@ -51,7 +73,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       }
       onSuccess(user);
     } catch (err: any) {
-      setError(err.message || `Failed to ${view}`);
+      setError(getFriendlyError(err));
     } finally {
       setLoading(false);
     }
@@ -69,12 +91,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
             onClick={onClose}
           />
           <div className={styles.modalWrapper}>
-            <m.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className={styles.modalContainer}
-            >
+            <div className={styles.modalContainer}>
               <button className={styles.closeBtn} onClick={onClose}>
                 <X size={20} />
               </button>
@@ -83,23 +100,32 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                 {/* Left Section - Branding & Visual */}
                 <div className={styles.leftSection}>
                   <div className={styles.branding}>
-                    <div className={styles.logoCircle}>
-                      <span className={styles.logoLetter}>U</span>
+                    <div className={styles.logoContainer}>
+                      <img 
+                        src="/UnReel-Logo-BW.png" 
+                        alt="UnReel" 
+                        className={styles.logoImg} 
+                        fetchPriority="high"
+                        decoding="async"
+                      />
                     </div>
                     <h1 className={styles.brandName}>UnReel</h1>
                     <p className={styles.tagline}>
-                      The ultimate AI partner for content creators and curious minds.
+                      Watch the intelligence unfold.
                     </p>
                   </div>
-                  <div className={styles.visualHook}>
-                    <div className={styles.glowOrb} />
-                    <div className={styles.floatingUI}>
-                      <div className={styles.uiLine} style={{ width: '80%' }} />
-                      <div className={styles.uiLine} style={{ width: '60%' }} />
-                      <div className={styles.uiLine} style={{ width: '90%' }} />
+                    <div className={styles.visualHook}>
+                      <div className={styles.vectorArt}>
+                        <img 
+                          src="/UnReel-Auth.png" 
+                          alt="" 
+                          className={styles.bigVectorLogo} 
+                          decoding="async"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <p className={styles.footerNote}>© 2026 UnReel AI Studio</p>
+                    <p className={styles.footerNote}>© 2026 UnReel</p>
                 </div>
 
                 {/* Right Section - Auth Form */}
@@ -267,7 +293,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                   </AnimatePresence>
                 </div>
               </div>
-            </m.div>
+            </div>
           </div>
         </>
       )}

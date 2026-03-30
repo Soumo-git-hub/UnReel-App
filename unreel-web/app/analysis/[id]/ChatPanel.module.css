@@ -3,16 +3,15 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 450px;
-  background: rgba(16, 16, 28, 0.96);
-  backdrop-filter: blur(12px);
-
+  width: 390px;
+  background: #161224; /* Solid deep midnight background */
   border-left: 1px solid var(--border);
   z-index: 10000;
   display: flex;
   flex-direction: column;
-  box-shadow: -20px 0 50px rgba(0, 0, 0, 0.5);
+  box-shadow: -20px 0 50px rgba(0, 0, 0, 0.4);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overscroll-behavior: contain;
 }
 
 .fullScreen {
@@ -20,9 +19,43 @@
   max-width: 100% !important;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 1024px) {
   .panel {
-    width: 100%;
+    width: 100vw;
+    right: 0;
+    left: 0;
+    max-width: 100%;
+    z-index: 10001; /* Above everything */
+    
+    height: 100dvh; /* Dynamic viewport height handles keyboard better */
+    bottom: 0;
+    top: auto;
+    overscroll-behavior: contain;
+  }
+
+  .chatArea {
+    padding: 1rem 1rem 2rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+
+  .inputContainer {
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    background: #161224;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .inputArea {
+    gap: 0.5rem;
+  }
+
+  .fullScreenBtn {
+    display: none !important;
   }
 }
 
@@ -32,7 +65,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.02);
+  background: #161224;
 }
 
 .headerActions {
@@ -72,7 +105,7 @@
 .header h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text);
   margin: 0;
 }
 
@@ -135,9 +168,9 @@
 }
 
 .botMsg .bubble {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--aurora-1);
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
   border-bottom-left-radius: 4px;
 }
 .typing {
@@ -192,7 +225,7 @@
 .inputContainer {
   padding: 1.5rem;
   border-top: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.2);
+  background: #161224;
 }
 
 .suggestions {
@@ -208,15 +241,15 @@
 }
 
 .suggestionBtn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
+  background: var(--aurora-1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem 1.25rem;
+  border-radius: 14px;
   font-size: 0.85rem;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .suggestionBtn:hover {
@@ -232,11 +265,11 @@
 
 .input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 0.75rem 1.25rem;
-  color: #fff;
+  color: var(--text);
   outline: none;
   transition: all 0.2s ease;
 }
@@ -288,6 +321,6 @@
 }
 
 .botMsg strong {
-  color: #fff;
+  color: var(--text);
   font-weight: 600;
 }

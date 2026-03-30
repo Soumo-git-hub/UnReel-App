@@ -2,20 +2,44 @@ import React from 'react';
 import { History, Bookmark, Settings } from 'lucide-react';
 import styles from './Header.module.css';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onToggleHistory?: () => void;
+  onToggleSettings?: () => void;
+  hideHistory?: boolean;
+  hideSettings?: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ onToggleHistory, onToggleSettings, hideHistory, hideSettings }) => {
   return (
     <header className={styles.header}>
       <div className={styles.leftIcons}>
-        <button className={styles.iconButton} aria-label="History">
-          <History size={24} />
-        </button>
-        <button className={styles.iconButton} aria-label="Bookmarks">
-          <Bookmark size={24} />
-        </button>
+        {!hideHistory && (
+          <button 
+            className={styles.iconButton} 
+            aria-label="History" 
+            onClick={onToggleHistory}
+          >
+            <History size={24} />
+          </button>
+        )}
       </div>
-      <button className={styles.iconButton} aria-label="Settings">
-        <Settings size={24} />
-      </button>
+
+      <div className={styles.centerLogo} onClick={() => window.location.href = '/'}>
+        <img src="/UnReel-Logo-BW.png" alt="" className={styles.logo} />
+        <span className={styles.logoText}>UnReel</span>
+      </div>
+
+      <div className={styles.rightIcons}>
+        {!hideSettings && (
+          <button 
+            className={styles.iconButton} 
+            aria-label="Settings" 
+            onClick={onToggleSettings}
+          >
+            <Settings size={24} />
+          </button>
+        )}
+      </div>
     </header>
   );
 };
