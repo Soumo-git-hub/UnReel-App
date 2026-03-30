@@ -52,7 +52,9 @@ class MediaService:
                     'format': 'best[ext=mp4]',
                     'outtmpl': video_path,
                     'quiet': True,
-                    'retries': 2,
+                    'retries': 3,
+                    'force_generic_extractor': False,
+                    'source_address': '0.0.0.0', # Force IPv4 for cloud stability
                 }
                 # Add cookie support if available
                 cookie_path = settings.INSTAGRAM_COOKIE_FILE or 'instagram_cookies.txt'
@@ -72,26 +74,35 @@ class MediaService:
                 logger.warning(f"Tier 0 (yt-dlp) failed: {e}. Moving to Triple-Fallback Shield...")
                 
                 # --- TIER 1: Instagram Looter (150/mo) ---
-                success = await self._try_looter_download(url, video_path)
-                if success:
-                    metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via Looter Proxy'}
-                    logger.info("Tier 1 (Looter) successful!")
-                else:
-                    # --- TIER 2: KK Creation Downloader (43/mo) ---
-                    logger.warning("Tier 1 failed. Trying Tier 2 (KK Creation)...")
-                    success = await self._try_kk_creation_download(url, video_path)
+                try:
+                    success = await self._try_looter_download(url, video_path)
                     if success:
-                        metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via KK Proxy'}
-                        logger.info("Tier 2 (KK Creation) successful!")
+                        metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via Looter Proxy'}
+                        logger.info("Tier 1 (Looter) successful!")
                     else:
-                        # --- TIER 3: Stable Scraper (20/mo) ---
-                        logger.warning("Tier 2 failed. Trying Tier 3 (Stable Scraper)...")
-                        success = await self._try_stable_scraper_download(url, video_path)
+                        raise Exception("Looter API returned failure or empty URL")
+                except Exception as e1:
+                    # --- TIER 2: KK Creation Downloader (43/mo) ---
+                    logger.warning(f"Tier 1 failed ({e1}). Trying Tier 2 (KK Creation)...")
+                    try:
+                        success = await self._try_kk_creation_download(url, video_path)
                         if success:
-                            metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via Stable Proxy'}
-                            logger.info("Tier 3 (Stable Scraper) successful!")
+                            metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via KK Proxy'}
+                            logger.info("Tier 2 (KK Creation) successful!")
                         else:
-                            logger.error("All Download Shields Failed.")
+                            raise Exception("KK Creation API returned failure or empty URL")
+                    except Exception as e2:
+                        # --- TIER 3: Stable Scraper (20/mo) ---
+                        logger.warning(f"Tier 2 failed ({e2}). Trying Tier 3 (Stable Scraper)...")
+                        try:
+                            success = await self._try_stable_scraper_download(url, video_path)
+                            if success:
+                                metadata = {'title': 'Instagram Video', 'uploader': 'IG User', 'caption': 'Downloaded via Stable Proxy'}
+                                logger.info("Tier 3 (Stable Scraper) successful!")
+                            else:
+                                raise Exception("Stable Scraper API returned failure or empty URL")
+                        except Exception as e3:
+                            logger.error(f"All Download Shields Failed. T3 Error: {e3}")
                             raise Exception("Could not download Instagram video. All fallback proxies were blocked or exhausted.")
 
             # Processing steps (FFMPEG)
