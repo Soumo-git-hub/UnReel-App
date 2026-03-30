@@ -49,13 +49,19 @@ class MediaService:
             try:
                 logger.info(f"Tier 0: Attempting native yt-dlp download for {url}")
                 ydl_opts = {
-                    'format': 'best[ext=mp4]',
+                    'format': 'best[ext=mp4]/best',
                     'outtmpl': video_path,
-                    'quiet': True,
-                    'retries': 3,
+                    'quiet': False, # Enabled for better cloud debugging
+                    'no_warnings': False,
+                    'retries': 5,
+                    'socket_timeout': 20,
                     'force_generic_extractor': False,
-                    'source_address': '0.0.0.0', # Force IPv4 for cloud stability
+                    'source_address': '0.0.0.0', # Force IPv4
                 }
+                
+                # Cloud DNS Bypass Hack: Standard library doesn't easily allow DNS override in yt-dlp 
+                # but we can try to use standard networking hooks if needed.
+                
                 # Add cookie support if available
                 cookie_path = settings.INSTAGRAM_COOKIE_FILE or 'instagram_cookies.txt'
                 if os.path.exists(cookie_path):
@@ -136,62 +142,70 @@ class MediaService:
         """Fallback Tier 1: Instagram Looter (150/mo)"""
         if not settings.RAPID_API_KEY: return False
         try:
-            # Note: Endpoint based on provided snippet. Uses media info to get direct URL.
-            api_url = "https://instagram-looter2.p.rapidapi.com/media-ID-from-URL"
+            # Official Endpoint for Media Info
+            api_url = "https://instagram-looter2.p.rapidapi.com/media"
             params = {"url": url}
             headers = {"X-RapidAPI-Key": settings.RAPID_API_KEY, "X-RapidAPI-Host": "instagram-looter2.p.rapidapi.com"}
             
-            response = await asyncio.to_thread(requests.get, api_url, headers=headers, params=params, timeout=12)
+            logger.info(f"RapidAPI Tier 1: Calling {api_url}")
+            response = await asyncio.to_thread(requests.get, api_url, headers=headers, params=params, timeout=15)
+            logger.info(f"Tier 1 Status: {response.status_code}")
+            
             if response.status_code == 200:
                 data = response.json()
-                # Parse logic varies by provider. Assuming data contains direct media link.
-                # If ID-from-URL returns an ID, we'd need a second call to 'Media Details'. 
-                # Let's check for a direct link first.
-                video_url = data.get("media_url") or data.get("url") or data.get("video_url")
+                video_url = data.get("media_url") or data.get("url") or (data.get("links", [{}])[0].get("link") if data.get("links") else None)
                 if video_url:
                     return await self._download_file(video_url, output_path)
             return False
-        except Exception: return False
+        except Exception as e:
+            logger.error(f"Tier 1 Looter Error: {e}")
+            return False
 
     async def _try_kk_creation_download(self, url: str, output_path: str) -> bool:
         """Fallback Tier 2: KK Creation Downloader (43/mo)"""
         if not settings.RAPID_API_KEY: return False
         try:
-            api_url = "https://instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com/convert"
+            api_url = "https://instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com/download"
             params = {"url": url}
             headers = {"X-RapidAPI-Key": settings.RAPID_API_KEY, "X-RapidAPI-Host": "instagram-downloader-download-instagram-stories-videos4.p.rapidapi.com"}
             
+            logger.info(f"RapidAPI Tier 2: Calling {api_url}")
             response = await asyncio.to_thread(requests.get, api_url, headers=headers, params=params, timeout=15)
+            
             if response.status_code == 200:
                 data = response.json()
-                # Based on the /convert endpoint, the quality list usually contains the link
+                media = data.get("media", [])
                 video_url = None
-                if isinstance(data, list) and len(data) > 0:
-                    video_url = data[0].get("url")
-                elif isinstance(data, dict):
-                    video_url = data.get("url") or data.get("video")
+                if isinstance(media, list) and len(media) > 0:
+                    video_url = media[0].get("url")
                 
                 if video_url:
                     return await self._download_file(video_url, output_path)
             return False
-        except Exception: return False
+        except Exception as e:
+            logger.error(f"Tier 2 KK Error: {e}")
+            return False
 
     async def _try_stable_scraper_download(self, url: str, output_path: str) -> bool:
         """Fallback Tier 3: Instagram Scraper Stable (20/mo)"""
         if not settings.RAPID_API_KEY: return False
         try:
-            api_url = "https://instagram-scraper-stable-api.p.rapidapi.com/get_ig_media_v2.php" # Guessed correct details endpoint
-            params = {"username_or_url": url}
+            api_url = "https://instagram-scraper-stable-api.p.rapidapi.com/instagram_video" 
+            params = {"url": url}
             headers = {"X-RapidAPI-Key": settings.RAPID_API_KEY, "X-RapidAPI-Host": "instagram-scraper-stable-api.p.rapidapi.com"}
             
+            logger.info(f"RapidAPI Tier 3: Calling {api_url}")
             response = await asyncio.to_thread(requests.get, api_url, headers=headers, params=params, timeout=15)
+            
             if response.status_code == 200:
                 data = response.json()
-                video_url = data.get("video_url")
+                video_url = data.get("url") or data.get("video_url")
                 if video_url:
                     return await self._download_file(video_url, output_path)
             return False
-        except Exception: return False
+        except Exception as e:
+            logger.error(f"Tier 3 Stable Error: {e}")
+            return False
 
     async def _download_file(self, url: str, path: str) -> bool:
         """Helper to stream a file from external URL to server path."""
