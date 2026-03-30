@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# UnReel Python Backend
+# UnReel Python Backend (v1.0-optimized)
 
 This is the Python implementation of the UnReel backend API, built with FastAPI, SQLAlchemy, and Google's Gemini AI. The application analyzes short-form videos from platforms like YouTube Shorts and Instagram Reels, providing detailed content analysis, transcripts, and AI-powered insights.
 
