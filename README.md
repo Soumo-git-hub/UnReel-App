@@ -1,6 +1,6 @@
 # UnReel
 
-**AI-Powered Video Content Analysis Platform**
+**Video Intelligence and Analysis Platform**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 

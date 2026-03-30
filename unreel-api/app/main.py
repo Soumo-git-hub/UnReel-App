@@ -9,6 +9,8 @@ from app.database import Base, engine
 from app.core.config import settings
 from app.database_migration import add_detected_language_column, add_user_id_column, add_multi_lens_columns
 
+from contextlib import asynccontextmanager
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -17,24 +19,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create database tables
-try:
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables created successfully")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Create database tables and run migrations
+    try:
+        logger.info("Initializing database...")
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created successfully")
+        
+        # Run database migrations
+        add_detected_language_column()
+        add_user_id_column()
+        add_multi_lens_columns()
+        logger.info("Database migration completed successfully")
+    except Exception as e:
+        logger.error(f"Error during startup database operations: {e}")
     
-    # Run database migrations
-    add_detected_language_column()
-    add_user_id_column()
-    add_multi_lens_columns()
-    logger.info("Database migration completed successfully")
-except Exception as e:
-    logger.error(f"Error creating database tables: {e}")
+    yield
+    # Shutdown logic (if any) here
 
 # Create FastAPI app
 app = FastAPI(
     title="UnReel API",
     description="AI companion app that analyzes short-form videos",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Add CORS middleware
