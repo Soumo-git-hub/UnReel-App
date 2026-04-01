@@ -9,6 +9,67 @@ import { useAuth } from '@/lib/AuthContext';
 
 import styles from './SettingsPanel.module.css';
 
+const ProfileSettings: React.FC<{ 
+  localDisplayName: string; 
+  onSave: (name: string) => void; 
+}> = ({ localDisplayName, onSave }) => {
+  const [tempName, setTempName] = useState(localDisplayName);
+  return (
+    <div className={styles.expandedContent}>
+      <div className={styles.inputGroup}>
+        <label>Display Name</label>
+        <input 
+          type="text" 
+          value={tempName} 
+          onChange={(e) => setTempName(e.target.value)}
+          placeholder="Update name..." 
+        />
+      </div>
+      <button 
+        className={styles.saveBtn}
+        onClick={() => onSave(tempName)}
+      >
+        Update Profile
+      </button>
+    </div>
+  );
+};
+
+const ChatPersonaSettings: React.FC<{
+  chatPresets: string[];
+  customPrompt: string;
+  onTogglePreset: (preset: string) => void;
+  onUpdateCustom: (val: string) => void;
+}> = ({ chatPresets, customPrompt, onTogglePreset, onUpdateCustom }) => {
+  const availablePresets = ["Professional", "Gen-Z", "Content Creator", "Skeptic", "Concise", "Academic", "Marketer", "Humorous"];
+  return (
+    <div className={styles.expandedContent}>
+      <p className={styles.hintText}>Select tags to guide the AI's tone and style.</p>
+      <div className={styles.tagGrid}>
+        {availablePresets.map(preset => (
+          <button 
+            key={preset}
+            className={`${styles.tagBtn} ${chatPresets.includes(preset) ? styles.tagActive : ''}`}
+            onClick={() => onTogglePreset(preset)}
+          >
+            {preset}
+          </button>
+        ))}
+      </div>
+      <div className={styles.inputGroup} style={{ marginTop: '1rem' }}>
+        <label>Custom Instructions</label>
+        <textarea 
+          value={customPrompt} 
+          onChange={(e) => onUpdateCustom(e.target.value)} 
+          placeholder="e.g. 'I'm a medical student, brutally fact-check claims.'"
+          rows={3}
+        />
+      </div>
+    </div>
+  );
+};
+
+
 interface SettingsPanelProps {
   isOpen: boolean;
   onToggle: () => void;
@@ -25,6 +86,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
   
   const [chatPresets, setChatPresets] = useState<string[]>([]);
   const [customPrompt, setCustomPrompt] = useState<string>('');
+  const [localDisplayName, setLocalDisplayName] = useState<string>('');
 
   React.useEffect(() => {
     setMounted(true);
@@ -32,12 +94,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
 
 
   const [lenses, setLenses] = useState({
-    educational: false,
-    shopping: false,
-    location: true,
-    factCheck: false,
+    educational: true,
+    shopping: true,
+    location: false,
+    factCheck: true,
     resource: false,
-    music: false
+    music: true
   });
 
   React.useEffect(() => {
@@ -54,7 +116,19 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
     }
     const savedCustom = localStorage.getItem('unreel_chat_custom');
     if (savedCustom) setCustomPrompt(savedCustom);
-  }, []);
+
+    const savedName = localStorage.getItem('unreel_display_name');
+    if (savedName) {
+      setLocalDisplayName(savedName);
+    } else if (user?.displayName) {
+      setLocalDisplayName(user.displayName);
+    }
+  }, [user]);
+
+  const handleUpdateName = (newName: string) => {
+    setLocalDisplayName(newName);
+    localStorage.setItem('unreel_display_name', newName);
+  };
 
   const toggleLens = (key: keyof typeof lenses) => {
     setLenses(prev => {
@@ -96,13 +170,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
           label: 'Profile Settings', 
           icon: <User size={16} />,
           renderExpanded: () => (
-            <div className={styles.expandedContent}>
-              <div className={styles.inputGroup}>
-                <label>Display Name</label>
-                <input type="text" defaultValue={user?.displayName || ''} placeholder="Update name..." />
-              </div>
-              <button className={styles.saveBtn}>Update Profile</button>
-            </div>
+            <ProfileSettings 
+              localDisplayName={localDisplayName} 
+              onSave={handleUpdateName} 
+            />
           )
         },
         { 
@@ -168,34 +239,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
           id: 'chat_persona',
           label: 'Chat Personality', 
           icon: <MessageSquare size={16} />,
-          renderExpanded: () => {
-             const availablePresets = ["Professional", "Gen-Z", "Content Creator", "Skeptic", "Concise", "Academic", "Marketer", "Humorous"];
-             return (
-              <div className={styles.expandedContent}>
-                <p className={styles.hintText}>Select tags to guide the AI's tone and style.</p>
-                <div className={styles.tagGrid}>
-                  {availablePresets.map(preset => (
-                    <button 
-                      key={preset}
-                      className={`${styles.tagBtn} ${chatPresets.includes(preset) ? styles.tagActive : ''}`}
-                      onClick={() => togglePreset(preset)}
-                    >
-                      {preset}
-                    </button>
-                  ))}
-                </div>
-                <div className={styles.inputGroup} style={{ marginTop: '1rem' }}>
-                  <label>Custom Instructions</label>
-                  <textarea 
-                    value={customPrompt} 
-                    onChange={(e) => updateCustomPrompt(e.target.value)} 
-                    placeholder="e.g. 'I'm a medical student, brutally fact-check claims.'"
-                    rows={3}
-                  />
-                </div>
-              </div>
-            );
-          }
+          renderExpanded: () => (
+             <ChatPersonaSettings 
+               chatPresets={chatPresets}
+               customPrompt={customPrompt}
+               onTogglePreset={togglePreset}
+               onUpdateCustom={updateCustomPrompt}
+             />
+          )
         },
       ]
     },
@@ -294,7 +345,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onToggle, onLogin
                 )}
               </div>
               <div className={styles.userInfo}>
-                <span className={styles.userName}>{user.displayName || 'Anonymous User'}</span>
+                <span className={styles.userName}>{localDisplayName || user.displayName || 'Anonymous User'}</span>
                 <span className={styles.userEmail}>{user.email}</span>
               </div>
             </div>

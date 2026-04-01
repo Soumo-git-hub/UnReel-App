@@ -1,456 +1,344 @@
-# UnReel
-
-**Video Intelligence and Analysis Platform**
-
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-> **Copyright © 2025 Soumyadyuti Dey** - This project is intended for educational and demonstration purposes only. Please respect copyright laws and platform terms of service when using this application. **Commercial use is strictly prohibited** without explicit written authorization.
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853D.svg?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![React Native](https://img.shields.io/badge/React_Native-0.72+-20232A.svg?style=flat&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Technical Stack](#technical-stack)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Setup Instructions](#setup-instructions)
-- [API Endpoints](#api-endpoints)
-- [Environment Variables](#environment-variables)
-- [Development Workflow](#development-workflow)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-UnReel is a sophisticated AI-powered platform designed to analyze video content from various sources including YouTube, Instagram, TikTok, and more. The platform extracts key insights, generates comprehensive summaries, identifies key topics, and provides multilingual translation capabilities.
-
-> **Commercial Use Prohibited**: This application is for educational and demonstration purposes only. Any commercial use is strictly prohibited without explicit written authorization from the copyright holder.
-
-## Screenshots
-
+# UnReel: Video Intelligence and Analysis Platform
 <div align="center">
+<img src="unreel-web/public/UnReel-Logo.png" alt="UnReel Logo" width="220"/>
 
-### Home Page
-<img src="images/Home Page.jpeg" alt="Home Page" width="250" style="display: inline-block; margin: 10px;"/>
 
-*Main interface for entering video URLs and initiating analysis*
 
-### Analysis Page
-<img src="images/Analysis Page.jpeg" alt="Analysis Page" width="250" style="display: inline-block; margin: 10px;"/>
+<h3>Watch the intelligence unfold</h3>
+<p>Developed by Soumyadyuti Dey</p>
 
-*Detailed analysis results including summary, key topics, and resources*
-
-### Chat Page
-<img src="images/Chat Page.jpeg" alt="Chat Page" width="250" style="display: inline-block; margin: 10px;"/>
-
-*Interactive chat interface for asking questions about the analyzed video*
-
+[**Live Frontend Web App**](https://un-reel-app.vercel.app) | [**Backend Intelligence API**](https://huggingface.co/spaces/soumo-lives-in-cloud/UnReel-API)
 </div>
 
-## Architecture
+---
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        UnReel Platform                          │
-├─────────────────────────────────────────────────────────────────┤
-│  Frontend (React Native/Expo)      Backend (FastAPI)            │
-│  ┌─────────────────────────┐       ┌─────────────────────────┐  │
-│  │ Mobile Application      │       │ API Services            │  │
-│  │ • Video URL Input       │       │ • Analysis Service      │  │
-│  │ • Results Display       │       │ • Media Processing      │  │
-│  │ • Chat Interface        │       │ • AI Service            │  │
-│  │ • Settings              │       │ • Translation Service   │  │
-│  └─────────────────────────┘       └─────────────────────────┘  │
-│                              │                                  │
-│  ┌─────────────────────────┐       ┌─────────────────────────┐  │
-│  │ Third-party APIs        │       │ External Services       │  │
-│  │ • YouTube API           │       │ • Google Gemini AI      │  │
-│  │ • Instagram API         │       │ • PostgreSQL DB         │  │
-│  │ • TikTok API            │       │ • Adminer (Admin UI)    │  │
-│  └─────────────────────────┘       └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+## 📝 Overview
+**UnReel** is a state-of-the-art **Video Intelligence and Analysis tool** designed to transform complex short-form content into actionable insights. By leveraging multi-modal artificial intelligence (Google Gemini 1.5 Pro) and a robust Retrieval-Augmented Generation (RAG) architecture, UnReel decodes the "Invisible Data" within videos—extracting context, verifying claims, and identifying resources that are often missed by traditional players.
 
-## Technical Stack
+## ✨ Key Features
 
-### Backend
+### 🤖 Specialized Intelligence Lenses (M.L.I.)
+UnReel uses a specialized orchestrator to run granular analysis through dedicated lens pipelines:
+*   **Location Lens**: **Flow**: Gemini analyzes visual frames to determine the `sceneType` (Indoor, Urban, Beach, etc.) and identifies global landmarks with confidence-weighted spatial recognition.
+*   **Educational Lens**: **Flow**: Extracts pedagogical value from transcripts and visual overlays; distills tutorials into structured `educationalInsights` (steps, tips, and key takeaways).
+*   **Shopping Lens**: **Flow**: Detects products, outfits, and gadgets; generates descriptive metadata and utilizes a **RAG pass** to find real-world purchase links and official search queries.
+*   **Fact-Check Lens**: **Flow**: A dual-tier process; identifies 1-3 verifiable claims which are then cross-referenced with live Google Search results for a final, evidence-grounded verdict.
+*   **Resource Lens (Link-Detective)**: **Flow**: Identifies "gatekept" resources (e.g., "Link in bio", "Comment for link"); determines resource types (Notion templates, books, apps) and provides direct search queries to bypass DMs.
+*   **Music Lens**: **Flow**: Bypasses general AI for a specialized **Shazam Core Scan**; identifies background tracks even in high-noise environments and provides official music credits and streaming links.
 
-- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) - High-performance web framework with automatic API documentation
-- **Language**: Python 3.10+
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **AI/ML**: Google Gemini AI for content analysis
-- **Media Processing**: yt-dlp for video extraction, FFmpeg for audio processing
-- **API Documentation**: Automatic OpenAPI/Swagger documentation
-- **Authentication**: JWT-based authentication
-- **Environment**: Docker & Docker Compose for containerization
+*   **Intelligence Dashboards**: Instant visualization of deep video context via a high-density forensic UI.
+*   **Conversational RAG Engine**: An interactive "Living Document" interface where users can interrogate video content, transcripts, and visual evidence in real-time.
+*   **Professional Reporting**: One-click generation of comprehensive **PDF forensic reports** (jsPDF) for researchers and investigators.
+*   **High-Resilience Ingestion**: Instant ingestion support for **Instagram, YouTube, X, LinkedIn**, and **Google Drive**.
+*   **Multi-Language Logic**: Real-time translation and dialect detection for global content decoding.
+*   **Secure Identity Management**: Enterprise-grade secure authentication via **Firebase Auth** (Google Login & Email/Pass).
 
-### Frontend
+#### 🔄 The 8-Step Engineering Pipeline
+UnReel orchestrates a sophisticated media and AI pipeline to achieve its high-fidelity output:
+1.  **Multi-Shield Ingestion**: Orchestrating `yt-dlp` and social proxies to bypass rate-limits and region-locks.
+2.  **Visual & Audio Atomization**: Using **FFmpeg** to extract frames (@0.2 FPS) and isolate high-quality audio streams.
+3.  **Neural Transcription**: Pushing isolated audio through **OpenAI Whisper** for high-precision time-coded text.
+4.  **Linguistic Identification**: Running `langdetect` to establish the semantic baseline for analysis.
+5.  **Multi-Modal AI Orchestration**: Feeding visual frames + transcript + audio into **Gemini 1.5 Pro** for unified reasoning.
+6.  **Parallel Lens Execution**: Simultaneous generation of M.L.I. data blocks (Location, Shopping, etc.) based on user toggles.
+7.  **Search-Grounded RAG Refinement**: Running concurrent **Google Search API** queries to verify AI-extracted claims and find marketplace links.
+8.  **Contextual Synthesis & Persistence**: Committing the final intelligence block to **PostgreSQL** and initializing the chat context.
 
-- **Framework**: [React Native](https://reactnative.dev/) with [Expo](https://expo.dev/)
-- **State Management**: React Context API
-- **UI Components**: Native components with custom styling
-- **Navigation**: React Navigation
-- **HTTP Client**: Axios for API communication
-- **Platform Support**: Android and iOS
+## 🗃️ Database Architecture (PostgreSQL/SQLAlchemy)
+The core infrastructure utilizes a high-density relational schema optimized for deep media persistence and asynchronous JSON enrichment.
 
-### Infrastructure
+### ✨ Primary Schema Entities
+*   **`Analysis` Table**: The centralized intelligence hub for every video interrogation.
+    *   **Core Logic**: `id` [UUID], `originalUrl` [URL String], `status` [Lifecycle Flag].
+    *   **Media Metadata**: `title`, `uploader`, `caption`, `fullTranscript`.
+    *   **Multi-Lens Blobs (JSON)**: `locationContext`, `educationalInsights`, `shoppingItems`, `factCheck`, `enhancedResources`, `musicContext`.
+    *   **Persistence**: `createdAt`, `updatedAt`, `userId` [Indexed for session retrieval].
 
-- **Containerization**: Docker & Docker Compose
-- **Database**: PostgreSQL with Adminer for database management
-- **API Gateway**: Built-in FastAPI routing
-- **Caching**: In-memory caching for performance
-- **Monitoring**: Structured logging and error handling
+*   **`ChatMessage` Table**: Persistent RAG-powered context for the Intelligence Chat.
+    *   **Schema**: `id` [UUID], `analysisId` [Foreign Key (Cascade)], `message` [User Question], `reply` [AI Context Response].
 
-## Features
+## 🛠️ Technical Stack & Libraries
+### Frontend (Next.js 16)
+*   **Core**: React 19, Next.js 16 (App Router)
+*   **Styling**: Vanilla CSS, Tailwind CSS
+*   **Interactive Components**: Framer Motion 12+, Lucide React
+*   **Identity Management**: Firebase Auth (Google OAuth, Email/Pass)
+*   **Intelligence Rendering**: React Markdown, **jspdf** (Automated Report Generation), jspdf-autotable
 
-### Core Features
+### Backend (FastAPI & AI Engine)
+*   **Framework**: FastAPI 0.104+, Uvicorn 0.24+
+*   **AI Orchestration**: Google Generative AI (Gemini 1.5), **LangChain**, OpenAI Whisper
+*   **Media Processing**: FFmpeg-python, yt-dlp, Langdetect, Deep-translator
+*   **Logic & Service Layer**: Pydantic 2.5 (Settings & Schemas), Requests, Firebase Admin SDK
 
-| Feature | Description |
-|--------|-------------|
-| **Multi-Platform Video Analysis** | Supports YouTube, Instagram, TikTok, and other video platforms |
-| **AI-Powered Content Analysis** | Comprehensive video analysis using Google Gemini |
-| **Multilingual Support** | Automatic language detection and translation |
-| **Real-time Chat Interface** | Interactive Q&A with analyzed video content |
-| **Video Analysis** | Frame capture and visual content analysis from video |
-| **Audio Analysis** | Audio extraction and speech-to-text transcription |
-| **Media Processing** | Audio extraction, frame capture, and metadata extraction |
-| **Comprehensive Summaries** | Detailed video summaries in English |
-| **Key Topic Identification** | Automatic identification of key topics |
-| **Resource Extraction** | Detection of mentioned products, locations, and resources |
+### Infrastructure & Pipeline
+*   **Database**: **Supabase PostgreSQL** (Managed High-Performance Persistence Layer)
+*   **ORM**: **SQLAlchemy 2.0** (Structured Data Abstraction)
+*   **Deployment**: Vercel (Frontend), Hugging Face Spaces (Backend Docker)
 
-### Technical Features
+## 🔌 Complete API v1 Reference
+The **UnReel API** provides an exhaustive RESTful architecture for deep video interrogation.
 
-| Feature | Description |
-|--------|-------------|
-| **RESTful API** | Clean, documented REST API with automatic validation |
-| **Type Safety** | Strict typing throughout the codebase |
-| **Error Handling** | Comprehensive error handling with fallback mechanisms |
-| **Asynchronous Processing** | Non-blocking operations for better performance |
-| **Scalable Architecture** | Modular design for easy scaling |
-| **Comprehensive Testing** | Unit tests, integration tests, and end-to-end tests |
-| **Docker Support** | Containerized deployment for consistency |
+### 🔍 Analysis Operations (`/api/v1/analyze`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/analyze` | List analysis history (Last 20 sessions for the current user). |
+| `POST` | `/api/v1/analyze` | **Analyze Video**: Creates a report with custom Intelligence Lens encoding. |
+| `GET` | `/api/v1/analyze/{id}` | Retrieve comprehensive intelligence report (Summary, M.L.I. Data, Transcript). |
+| `POST` | `/api/v1/analyze/{id}/translate` | Translate report/transcript into 50+ supported languages. |
 
-## Project Structure
-
-```
-unreel/
-├── unreel-api/                 # Backend API service
-│   ├── app/
-│   │   ├── core/              # Core configurations
-│   │   ├── routers/           # API route definitions
-│   │   ├── services/          # Business logic services
-│   │   │   ├── ai_service.py  # AI analysis service
-│   │   │   ├── media_service.py # Media processing service
-│   │   │   ├── analysis_service.py # Analysis orchestration
-│   │   │   ├── translation_service.py # Translation service
-│   │   │   └── speech_service.py # Speech processing service
-│   │   ├── database.py        # Database configuration
-│   │   ├── models.py          # Database models
-│   │   ├── schemas.py         # Pydantic schemas
-│   │   └── main.py            # Application entry point
-│   ├── tests/                 # Backend test suite
-│   ├── requirements.txt       # Python dependencies
-│   ├── Dockerfile             # Backend Docker configuration
-│   ├── docker-compose.yml     # Docker orchestration
-│   ├── run.py                 # Application runner
-│   └── README.md              # Backend documentation
-├── unreel-mobile/              # Mobile application
-│   ├── components/            # React Native components
-│   │   ├── HomeScreen.js      # Main input screen
-│   │   ├── AnalysisResultScreen.js # Results display
-│   │   ├── ChatScreen.js      # Interactive chat
-│   │   ├── HistoryScreen.js   # Analysis history
-│   │   └── SettingsScreen.js  # App settings
-│   ├── services/              # API service layer
-│   │   └── api.js             # API client
-│   ├── App.js                 # Main application component
-│   ├── app.json               # Expo configuration
-│   ├── package.json           # Node.js dependencies
-│   └── README.md              # Mobile documentation
-├── .env.sample               # Sample environment variables
-├── .gitignore                # Git ignore configuration
-└── README.md                 # Project documentation
+#### **POST /api/v1/analyze Interface**
+**Request Body**:
+```json
+{
+  "url": "https://www.youtube.com/shorts/...",
+  "focusLocation": true,
+  "focusEducational": true,
+  "focusShopping": true,
+  "focusFactCheck": true,
+  "focusResource": true,
+  "focusMusic": true
+}
 ```
 
-## Setup Instructions
+**Response Schema**:
+```json
+{
+  "analysisId": "550e8400-e29b-41d4-a716-446655440000",
+  "originalUrl": "https://www.instagram.com/reel/Cxyz.../",
+  "status": "completed",
+  "metadata": {
+    "title": "Tokyo Night Walk",
+    "uploader": "urban_explorer",
+    "caption": "Shibuya vibes at midnight. #tokyo #shibuya"
+  },
+  "content": {
+    "summary": "The video showcases a walking tour through Shibuya at night...",
+    "translation": "Das Video zeigt einen Rundgang durch Shibuya bei Nacht...",
+    "keyTopics": ["Tokyo", "Shibuya", "Nightlife"],
+    "mentionedResources": [{"type": "Location", "name": "Shibuya Crossing"}],
+    "locationContext": {
+      "sceneType": "Urban Street",
+      "landmark": "Shibuya Crossing",
+      "confidence": 0.98
+    },
+    "educationalInsights": ["Tip: Visit after 11 PM for fewer crowds"],
+    "shoppingItems": [{"name": "Neon Jackets", "potentialUrl": "Shibuya neon fashion"}],
+    "factCheck": [{"claim": "Shibuya has the world's busiest crossing", "verdict": "Supported"}],
+    "enhancedResources": [{"name": "Tokyo Travel Guide", "urlSuggestion": "Tokyo guide 2026"}],
+    "musicContext": {"songName": "Tokyo Drift", "artist": "Teriyaki Boyz"}
+  },
+  "availableFeatures": {"location": true, "shopping": true, "factCheck": true},
+  "fullTranscript": "Hey guys, look at these neon lights in Shibuya...",
+  "detectedLanguage": "en",
+  "createdAt": "2026-04-01T21:44:00.000Z"
+}
+```
+
+### 💬 Intelligence Engagement (`/api/v1/chat`)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/chat` | **Interactive Chat**: High-fidelity RAG conversation within the video context. |
+| `GET` | `/api/v1/chat/{analysisId}` | Retrieve full chat message history for a specific analysis session. |
+
+#### **POST /api/v1/chat Interface**
+**Request Body**:
+```json
+{
+  "analysisId": "550e8400-e29b-41d4-a716-446655440000",
+  "message": "Where in Tokyo was this filmed?",
+  "persona": "Professional Forensic Analyst"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "reply": "Based on the visual evidence and landmark recognition, this was filmed at Shibuya Crossing in Tokyo, Japan. The analysis detected characteristic neon signage and heavy pedestrian flow at timestamp 0:12."
+}
+```
+
+### ⚙️ System Monitoring
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/health` | Real-time system health and service status. |
+
+## ⚙️ Setup & Installation
 
 ### Prerequisites
-
 - **Node.js** (v18 or higher)
-- **Python** (v3.10 or higher)
-- **Docker** and **Docker Compose** (optional, for containerized deployment)
-- **FFmpeg** (for media processing)
-- **Git** (for version control)
+- **Python** (v3.11 or higher)
+- **Docker** and **Docker Compose** (For containerized deployment)
+- **FFmpeg** (Crucial for frame capture and audio processing)
+- **Git** (For version control)
 
 ### Quick Start
-
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd UnReel
+   git clone https://github.com/Soumo-git-hub/UnReel-App.git
+   cd UnReel-App
    ```
+2. **Configure Environment Variables** (See [Environment Variables](#environment-variables) section below)
 
-2. **Setup environment variables**:
-   ```bash
-   # Copy the sample environment file
-   cp .env.sample .env
-   ```
-
-3. **Configure environment variables** (see [Environment Variables](#environment-variables) section)
-
-### Backend Setup
-
+### Backend Setup (FastAPI)
 1. **Navigate to the backend directory**:
    ```bash
    cd unreel-api
    ```
-
 2. **Create a virtual environment**:
    ```bash
-   python -m venv unreel-env
-   source unreel-env/bin/activate  # On Windows: unreel-env\Scripts\activate
+   python -m venv venv
+   source venv/bin/activate  # On Windows: .\venv\Scripts\Activate.ps1
    ```
-
 3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
-
-4. **Start the backend service**:
+4. **Initialize Database & Start**:
    ```bash
    python run.py
    ```
 
-### Frontend Setup
-
-1. **Navigate to the mobile directory**:
+### Frontend Setup (Next.js 16)
+1. **Navigate to the web dashboard**:
    ```bash
-   cd unreel-mobile
+   cd unreel-web
    ```
-
 2. **Install dependencies**:
    ```bash
    npm install
-   # Or if using yarn
-   yarn install
    ```
-
 3. **Start the development server**:
    ```bash
-   npx expo start
+   npm run dev
    ```
 
-### Docker Setup (Alternative)
+## 🔐 Environment Variables
 
-1. **Navigate to the backend directory**:
-   ```bash
-   cd unreel-api
-   ```
+Create a `.env` file in the `unreel-api` directory and a `.env.local` in the `unreel-web` directory.
 
-2. **Start all services with Docker**:
-   ```bash
-   docker-compose up --build
-   ```
-
-## API Endpoints
-
-### Analysis Service
-
-- `POST /api/v1/analyze/` - Analyze a video URL
-- `GET /api/v1/analyze/{analysis_id}` - Get analysis results
-- `POST /api/v1/chat/` - Chat with the AI about a video
-
-### Response Format
-
-```json
-{
-  "analysisId": "string",
-  "originalUrl": "string",
-  "status": "string",
-  "metadata": {
-    "title": "string",
-    "uploader": "string",
-    "caption": "string"
-  },
-  "content": {
-    "summary": "string",
-    "translation": "string",
-    "keyTopics": ["string"],
-    "mentionedResources": [
-      {
-        "type": "string",
-        "name": "string"
-      }
-    ]
-  },
-  "fullTranscript": "string",
-  "detectedLanguage": "string",
-  "supportedLanguages": {
-    "language_code": "Language Name"
-  },
-  "createdAt": "timestamp"
-}
-```
-
-## Environment Variables
-
-Create a `.env` file in the `unreel-api` directory with the following variables:
-
+### Backend (`unreel-api/.env`)
 ```env
-# API Configuration
-GEMINI_API_KEY=your_google_gemini_api_key
-DATABASE_URL=postgresql://username:password@localhost:5432/unreel
+# Intelligence Core
+GEMINI_API_KEY=your_google_ai_studio_key
+DATABASE_URL=postgresql://your_user:your_pass@db.supabase.co:5432/postgres
+SHAZAM_API_KEY=your_shazam_key
 
-# Server Configuration
-SERVER_HOST=0.0.0.0
-SERVER_PORT=3000
-SERVER_NAME=UnReel API
-SERVER_LOG_LEVEL=info
+# Security & Firebase
+FIREBASE_SERVICE_ACCOUNT_JSON=./firebase-adminsdk.json
 
-# Database Configuration
-DB_ECHO=false
-DB_POOL_SIZE=20
-DB_MAX_OVERFLOW=30
-
-# AI Service Configuration
-GEMINI_MODEL=gemini-flash-latest
-
-# Media Processing
+# Media Paths (Optional if in System PATH)
 FFMPEG_PATH=/usr/bin/ffmpeg
 YT_DLP_PATH=/usr/local/bin/yt-dlp
-
-# CORS Configuration
-BACKEND_CORS_ORIGINS=http://localhost:3000,http://localhost:19006
-
-# Security
-JWT_SECRET_KEY=your_secret_key
-JWT_ALGORITHM=HS256
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-## Development Workflow
+### Frontend (`unreel-web/.env.local`)
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=unreel.firebaseapp.com
+```
 
-### Backend Development
+## 🛠️ Development & Testing
 
-1. **Run the development server**:
-   ```bash
-   python run.py
-   ```
+### Workflow
+1. **Backend Documentation**: Access full interactive Swagger UI at `http://localhost:8000/docs`
+2. **Frontend Interactivity**: Use `npm run dev` to access the Dashboard with Hot Reloading.
+3. **Forensic Logs**: Follow real-time ingestion logs in the backend terminal to monitor the 8-step pipeline.
 
-2. **Access API documentation** at `http://localhost:3000/docs`
-
-3. **Run tests**:
-   ```bash
-   python -m pytest
-   ```
-
-### Frontend Development
-
-1. **Start the Expo development server**:
-   ```bash
-   npx expo start
-   ```
-
-2. **Use Expo Go app to scan QR code** or run on emulator
-
-3. **For Android emulator**, the API endpoint is configured to `http://10.0.2.2:3000`
-
-### Testing
-
-#### Backend Tests
-
-Run the complete test suite:
-
+### Testing Suite
 ```bash
-# Navigate to backend directory
+# Navigate to backend
 cd unreel-api
 
-# Run all tests
-python tests/run_all_tests.py
+# Run full AI & Media test suite
+python -m pytest tests/
 
-# Or run individual test files
+# Run individual pipeline tests
 python tests/test_full_analysis.py
-python tests/test_api.py
-python tests/test_media_service.py
 ```
 
-#### Test Coverage
+## 🔍 Troubleshooting
+1. **FFmpeg Not Found**: Ensure FFmpeg is installed and added to your System PATH. On Windows, restart your terminal after installation.
+2. **Gemini 403 Forbidden**: Verify your Google AI Studio API key and usage limits.
+3. **Database Connection**: Ensure the PostgreSQL service is running and the `DATABASE_URL` is correct.
+4. **CORS Errors**: Ensure the `BACKEND_CORS_ORIGINS` in your environment includes the URL of your frontend dashboard.
 
-- **API Tests**: End-to-end API functionality
-- **Service Tests**: Individual service functionality
-- **Integration Tests**: Full analysis workflow
-- **Unit Tests**: Individual function testing
-
-## Deployment
-
-### Production Deployment
-
-1. **Build Docker images**:
-   ```bash
-   docker-compose -f docker-compose.prod.yml build
-   ```
-
-2. **Start production services**:
-   ```bash
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
-
-### Environment-Specific Deployments
-
-- **Development**: Use `docker-compose.dev.yml`
-- **Staging**: Use `docker-compose.staging.yml`
-- **Production**: Use `docker-compose.prod.yml`
-
-## Troubleshooting
-
-### Common Issues
-
-1. **FFmpeg Not Found**:
-   - Ensure FFmpeg is installed and in your system PATH
-   - On Windows, restart your terminal after installing FFmpeg
-
-2. **Database Connection Issues**:
-   - Verify PostgreSQL is running
-   - Check database credentials in `.env` file
-
-3. **API Key Issues**:
-   - Ensure GEMINI_API_KEY is correctly set
-   - Verify API key has proper permissions
-
-4. **Mobile App Connection Issues**:
-   - For Android emulator: Use `http://10.0.2.2:3000`
-   - For physical devices: Use your machine's IP address
-
-### API Documentation
-
-Access comprehensive API documentation at `http://localhost:3000/docs` when the backend is running.
-
-## Contributing
-
+## 🤝 Contributing
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 📁 Project Structure
+```text
+UnReel-App/
+├── unreel-web/          # Next.js 16/React 19 Dashboard
+├── unreel-api/          # FastAPI Intelligence Engine
+└── Content/
+    ├── Documentation/   # Presentations & Architecture
+    ├── Video/           # Demo Overviews
+    └── images/          # Screenshots & Analysis Views
+```
 
+## 🎥 Video Intelligence Presentation
+[**Demo Video: Watch the intelligence unfold**](Content/Video/Demo%20Video%20-%20UnReel%20-%20Video%20Inteligence%20and%20Analysis%20Platform.mp4)
 
-## License
+## 📸 Technical Deep Dive & System UI
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Full System Architecture
+<div align="center">
+  <img src="Content/Documentation/Architecture%20Of%20UnReel.png" alt="System Architecture" width="800"/>
+  <br><b>The High-Performance Analysis Pipeline</b>
+</div>
 
-### Important Legal Considerations
+### Platform Interface & Intelligence Modules
+<div align="center">
+  <img src="Content/images/UnReel-HomePage.png" alt="Platform Home" width="800"/>
+  <br><b>UnReel Platform - Global Interface</b><br><br>
 
+  <img src="Content/images/Analysis-Summary-Resource-Context-Location.png" alt="Forensic Summary" width="800"/>
+  <br><b>Multi-Modal Intelligence Summary</b><br><br>
+
+  <img src="Content/images/Analysis-Education-Shoping-FactCheck.png" alt="Forensic Detailed" width="800"/>
+  <br><b>Intelligence Modules: Shopping, Fact-Check & Education</b><br><br>
+
+  <img src="Content/images/Analysis-Translation.png" alt="Forensic Translation" width="800"/>
+  <br><b>Multi-Language Translation Intelligence</b><br><br>
+
+  <img src="Content/images/Chat-with-my-reel-interface.png" alt="Intelligence Chat" width="400"/>
+  <br><b>RAG-powered Interactive Chat Engine</b><br><br>
+
+  <img src="Content/images/Chat-Personality-Settings.png" alt="Chat Personalization" width="400"/>
+  <br><b>Custom Intelligence Personas & Real-time Reasoning</b><br><br>
+
+  <img src="Content/images/Analysis-History.png" alt="Session History" width="400"/>
+  <br><b>Intelligent History & Analysis Persistence</b><br><br>
+
+  <img src="Content/images/Analysis-PDF-Report.png" alt="PDF Report" width="800"/>
+  <br><b>Automated Video Intelligence Report Generation (PDF)</b><br><br>
+
+  <img src="Content/images/Authentication.png" alt="Secure Auth" width="800"/>
+  <br><b>Secure Authentication Interface (Firebase Verified)</b>
+</div>
+
+## 📄 PPT Presentation & Ecosystem Logic
+The core platform vision, strategic analysis strategy, and technical logic are discussed in detail within our **PPT Documentation**:
+
+*   [**View Full PPT Documentation: UnReel Intelligence Platform**](Content/Documentation/UnReel%20-%20Video%20Intelligence%20and%20Analysis%20Platform%20-%20Documentation.pdf)
+*   [**View Full PPT Architecture & Logic**](Content/Documentation/UnReel_%20Video%20Intelligence%20and%20Analysis%20Platform.pdf)
+
+## 📄 License
+Licensed under the **MIT License**.
+
+### ⚖️ Important Legal & Disclaimer
 > **Disclaimer**: This application is intended for educational and demonstration purposes only. Users must comply with all applicable copyright laws, platform terms of service, and fair use principles when using this software.
 > 
-> **YouTube, Instagram, TikTok, and other platform content** used with this application remains the property of their respective owners. This tool does not grant any rights to the video content itself.
+> **Commercial Use**: Any commercial use of this software or the content processed by it is strictly prohibited without explicit written authorization from the copyright holder.
 > 
-> **Commercial Use**: Any commercial use of this software or the content processed by it requires explicit permission from content owners and may require additional licensing.
-> 
-> **Respect Platform APIs**: Users are responsible for complying with rate limits and terms of service of all third-party APIs used by this application (YouTube, Instagram, etc.).
+> **Platform Usage**: YouTube, Instagram, TikTok, and other platform content analyzed by this application remains the property of the respective owners. This tool does not provide any rights to the video content itself.
+
+## 👨‍💻 Author
+**Soumyadyuti Dey**
+[GitHub](https://github.com/Soumo-git-hub) | [LinkedIn](https://www.linkedin.com/in/soumyadyuti-dey-245sd/)
