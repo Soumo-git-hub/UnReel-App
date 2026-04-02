@@ -372,3 +372,92 @@
   cursor: pointer;
   margin-bottom: 24px;
 }
+
+/* Response Breakpoints */
+@media (max-width: 1024px) {
+  .modalContainer {
+    width: 900px;
+  }
+  
+  .leftSection {
+    padding: 48px;
+  }
+  
+  .brandName {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .modalContainer {
+    flex-direction: column;
+    height: auto;
+    max-height: 95vh;
+    border-radius: 24px;
+    overflow-y: auto;
+  }
+  
+  .splitLayout {
+    flex-direction: column;
+  }
+  
+  .leftSection {
+    flex: none;
+    width: 100%;
+    padding: 40px 24px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    height: 140px; /* Condensed for mobile */
+  }
+  
+  .branding {
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .logoContainer {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0;
+  }
+  
+  .brandName {
+    font-size: 2rem;
+    margin-bottom: 0;
+    letter-spacing: -1px;
+  }
+  
+  .tagline, .footerNote, .visualHook {
+    display: none; /* Hide illustrative content on mobile */
+  }
+  
+  .rightSection {
+    flex: none;
+    width: 100%;
+    padding: 40px 24px;
+  }
+  
+  .viewTitle {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  .viewSubtitle {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .closeBtn {
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.5);
+  }
+}
+
+@media (max-height: 700px) and (min-width: 769px) {
+  .modalContainer {
+    height: 95vh;
+  }
+}

@@ -44,6 +44,53 @@ UnReel orchestrates a sophisticated media and AI pipeline to achieve its high-fi
 7.  **Search-Grounded RAG Refinement**: Running concurrent **Google Search API** queries to verify AI-extracted claims and find marketplace links.
 8.  **Contextual Synthesis & Persistence**: Committing the final intelligence block to **PostgreSQL** and initializing the chat context.
 
+---
+
+## 📸 Technical Deep Dive & System UI
+
+### Full System Architecture
+<div align="center">
+  <img src="Content/Documentation/Architecture%20Of%20UnReel.png" alt="System Architecture" width="800"/>
+  <br><b>The High-Performance Analysis Pipeline</b>
+</div>
+
+### Platform Interface & Intelligence Modules
+<div align="center">
+  <img src="Content/images/UnReel-HomePage.png" alt="Platform Home" width="800"/>
+  <br><b>UnReel Platform - Global Interface</b><br><br>
+
+  <img src="Content/images/Analysis-Summary-Resource-Context-Location.png" alt="Forensic Summary" width="800"/>
+  <br><b>Multi-Modal Intelligence Summary</b><br><br>
+
+  <img src="Content/images/Analysis-Education-Shoping-FactCheck.png" alt="Forensic Detailed" width="800"/>
+  <br><b>Intelligence Modules: Shopping, Fact-Check & Education</b><br><br>
+
+  <img src="Content/images/Analysis-Translation.png" alt="Forensic Translation" width="800"/>
+  <br><b>Multi-Language Translation Intelligence</b><br><br>
+
+  <img src="Content/images/Chat-with-my-reel-interface.png" alt="Intelligence Chat" width="400"/>
+  <br><b>RAG-powered Interactive Chat Engine</b><br><br>
+
+  <img src="Content/images/Chat-Personality-Settings.png" alt="Chat Personalization" width="400"/>
+  <br><b>Custom Intelligence Personas & Real-time Reasoning</b><br><br>
+
+  <img src="Content/images/Analysis-History.png" alt="Session History" width="400"/>
+  <br><b>Intelligent History & Analysis Persistence</b><br><br>
+
+  <img src="Content/images/Analysis-PDF-Report.png" alt="PDF Report" width="800"/>
+  <br><b>Automated Video Intelligence Report Generation (PDF)</b><br><br>
+
+  <img src="Content/images/Authentication.png" alt="Secure Auth" width="800"/>
+  <br><b>Secure Authentication Interface (Firebase Verified)</b>
+</div>
+
+---
+
+## 🎥 Video Intelligence Presentation
+[**Demo Video: Watch the intelligence unfold**](Content/Video/Demo%20Video%20-%20UnReel%20-%20Video%20Inteligence%20and%20Analysis%20Platform.mp4)
+
+---
+
 ## 🗃️ Database Architecture (PostgreSQL/SQLAlchemy)
 The core infrastructure utilizes a high-density relational schema optimized for deep media persistence and asynchronous JSON enrichment.
 
@@ -282,46 +329,7 @@ UnReel-App/
     └── images/          # Screenshots & Analysis Views
 ```
 
-## 🎥 Video Intelligence Presentation
-[**Demo Video: Watch the intelligence unfold**](Content/Video/Demo%20Video%20-%20UnReel%20-%20Video%20Inteligence%20and%20Analysis%20Platform.mp4)
 
-## 📸 Technical Deep Dive & System UI
-
-### Full System Architecture
-<div align="center">
-  <img src="Content/Documentation/Architecture%20Of%20UnReel.png" alt="System Architecture" width="800"/>
-  <br><b>The High-Performance Analysis Pipeline</b>
-</div>
-
-### Platform Interface & Intelligence Modules
-<div align="center">
-  <img src="Content/images/UnReel-HomePage.png" alt="Platform Home" width="800"/>
-  <br><b>UnReel Platform - Global Interface</b><br><br>
-
-  <img src="Content/images/Analysis-Summary-Resource-Context-Location.png" alt="Forensic Summary" width="800"/>
-  <br><b>Multi-Modal Intelligence Summary</b><br><br>
-
-  <img src="Content/images/Analysis-Education-Shoping-FactCheck.png" alt="Forensic Detailed" width="800"/>
-  <br><b>Intelligence Modules: Shopping, Fact-Check & Education</b><br><br>
-
-  <img src="Content/images/Analysis-Translation.png" alt="Forensic Translation" width="800"/>
-  <br><b>Multi-Language Translation Intelligence</b><br><br>
-
-  <img src="Content/images/Chat-with-my-reel-interface.png" alt="Intelligence Chat" width="400"/>
-  <br><b>RAG-powered Interactive Chat Engine</b><br><br>
-
-  <img src="Content/images/Chat-Personality-Settings.png" alt="Chat Personalization" width="400"/>
-  <br><b>Custom Intelligence Personas & Real-time Reasoning</b><br><br>
-
-  <img src="Content/images/Analysis-History.png" alt="Session History" width="400"/>
-  <br><b>Intelligent History & Analysis Persistence</b><br><br>
-
-  <img src="Content/images/Analysis-PDF-Report.png" alt="PDF Report" width="800"/>
-  <br><b>Automated Video Intelligence Report Generation (PDF)</b><br><br>
-
-  <img src="Content/images/Authentication.png" alt="Secure Auth" width="800"/>
-  <br><b>Secure Authentication Interface (Firebase Verified)</b>
-</div>
 
 ## 📄 PPT Presentation & Ecosystem Logic
 The core platform vision, strategic analysis strategy, and technical logic are discussed in detail within our **PPT Documentation**:
